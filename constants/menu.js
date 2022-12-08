@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const MenuConfig = [
   {
@@ -14,7 +15,7 @@ const MenuConfig = [
         label: "Blockchain",
         children: [
           {
-            label: "Convert private key",
+            label: <Link href={"/tools/blockchain/private"}>Convert private key</Link>,
             key: "tool-blockchain-1",
           },
         ],

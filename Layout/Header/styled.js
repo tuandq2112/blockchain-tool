@@ -7,6 +7,8 @@ export const HeaderWrapper = styled.div`
   width: 100%;
   height: ${HEADER_HEIGHT};
   background-color: #03045e !important;
+  display: flex;
+  align-items: center;
 
   /* * {
     background-color: #03045e !important;

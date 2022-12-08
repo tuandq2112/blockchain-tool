@@ -1,5 +1,5 @@
-import { Descriptions } from 'antd';
-import { FooterWrapper } from './styled'
+import { Descriptions } from "antd";
+import { FooterWrapper } from "./styled";
 
 function Footer() {
   return (

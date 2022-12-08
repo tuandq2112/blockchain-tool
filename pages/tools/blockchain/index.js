@@ -1,4 +1,4 @@
-import { BlockchainWrapper } from './styled'
+import { BlockchainWrapper } from "styles/styled"
 
 function Blockchain() {
   return (

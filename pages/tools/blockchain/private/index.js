@@ -1,8 +1,8 @@
 import { Button, Col, Input, message, Row } from "antd";
 import { HighLightText } from "components/styled";
 import useObjectState from "hooks/useObjectState";
+import { PrivateWrapper } from "styles/styled";
 import { phraseToPrivateKey } from "utils";
-import { PrivateWrapper } from "./styled";
 function Private() {
   const [state, setState] = useObjectState({ checked: false });
 

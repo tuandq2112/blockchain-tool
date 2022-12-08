@@ -1,5 +1,4 @@
-import CustomLayout from "Layout";
-import { ToolsWrapper } from "./styled";
+import { ToolsWrapper } from "styles/styled";
 
 function Tools() {
   return <ToolsWrapper>Tools</ToolsWrapper>;

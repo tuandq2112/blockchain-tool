@@ -52,4 +52,10 @@ function Private() {
   );
 }
 
+export async function getStaticProps() {
+  return {
+    props: {},
+  };
+}
+
 export default Private;

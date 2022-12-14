@@ -8,18 +8,31 @@ export const convertPhrase = (pathName) => {
   let array = pathName.split("/");
   let ignoreEmptyString = array.filter((item) => item);
 };
-
-export const loopCreateBeautyWallet = (value, isPrefixes) => {
-  return new Promise((resolve, reject) => {
+//Functions
+async function sleep(ms = 1000) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+export const loopCreateBeautyWallet = (
+  value,
+  isPrefixes,
+  callback = () => {}
+) => {
+  return new Promise(async (resolve, reject) => {
     try {
       let startTime = new Date();
       let stop = true;
       let wallet;
+      let i = 0;
       while (stop) {
         wallet = ethers.Wallet.createRandom();
         let subAddress = wallet.address.substring(2);
-        console.log("wallet", wallet);
-
+        if (i && i % 10 == 0) {
+          callback(i);
+          await sleep();
+        }
+        i++;
         if (
           (isPrefixes && subAddress.startsWith(value)) ||
           (!isPrefixes && subAddress.endsWith(value))
@@ -27,6 +40,8 @@ export const loopCreateBeautyWallet = (value, isPrefixes) => {
           stop = false;
         }
       }
+      callback(i);
+
       let endTime = new Date();
       resolve({ startTime, endTime, wallet });
     } catch (error) {

@@ -9,16 +9,23 @@ function BeautyWallet() {
     value: "",
     checked: false,
     loading: false,
+    num: 0,
   });
   const { value, checked, loading, data } = state;
 
+  const updateNumberWallet = (num) => {
+    setState({ num });
+  };
   const handleCreateBeautyWallet = () => {
     setState({ loading: true });
     setTimeout(() => {
-      loopCreateBeautyWallet(value, checked)
+      loopCreateBeautyWallet(value, checked, updateNumberWallet)
         .then((res) => {
           let mnemonic = res.wallet._mnemonic();
-          setState({ data: res, phrase: mnemonic.phrase });
+          setState({
+            data: res,
+            phrase: mnemonic.phrase,
+          });
         })
         .catch((err) => {
           console.log(err);
@@ -57,6 +64,10 @@ function BeautyWallet() {
             <Descriptions.Item label="Status">
               {loading && <Spin />}
             </Descriptions.Item>
+
+            <Descriptions.Item label="Number Wallet created">
+              {state.num}
+            </Descriptions.Item>
           </Descriptions>
         </Col>
         <Col md={24}>
@@ -68,7 +79,7 @@ function BeautyWallet() {
             <Descriptions.Item label="Download private key">
               <Button
                 onClick={() => {
-                  debugger
+                  debugger;
                   downloadFile(state?.phrase, "privatekey.txt");
                 }}
               >

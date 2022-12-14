@@ -25,6 +25,7 @@ function BeautyWallet() {
           setState({
             data: res,
             phrase: mnemonic.phrase,
+            num: 0,
           });
         })
         .catch((err) => {

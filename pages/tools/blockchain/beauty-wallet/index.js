@@ -1,5 +1,7 @@
+import { CloudDownloadOutlined } from "@ant-design/icons";
 import { Button, Col, Descriptions, Input, Row, Spin, Switch } from "antd";
 import useObjectState from "hooks/useObjectState";
+import downloadFile from "js-file-download";
 import { BeautyWalletWrapper } from "styles/styled";
 import { loopCreateBeautyWallet } from "utils";
 function BeautyWallet() {
@@ -11,26 +13,22 @@ function BeautyWallet() {
   const { value, checked, loading, data } = state;
 
   const handleCreateBeautyWallet = () => {
-    console.log("Before click!");
     setState({ loading: true });
-    console.log("After click!");
-
     setTimeout(() => {
       loopCreateBeautyWallet(value, checked)
         .then((res) => {
-          console.log(res);
+          let mnemonic = res.wallet._mnemonic();
+          setState({ data: res, phrase: mnemonic.phrase });
         })
         .catch((err) => {
           console.log(err);
         })
         .finally(() => {
-          console.log("finally");
           setState({ loading: false });
         });
     }, 1000);
-    console.log("end function!");
   };
-  console.log("loading", loading);
+
   return (
     <BeautyWalletWrapper>
       <Row gutter={[24, 24]}>
@@ -67,8 +65,15 @@ function BeautyWallet() {
             <Descriptions.Item label="Address">
               {data?.wallet?.address}
             </Descriptions.Item>
-            <Descriptions.Item label="Private Key">
-              {loading && <Spin />}
+            <Descriptions.Item label="Download private key">
+              <Button
+                onClick={() => {
+                  debugger
+                  downloadFile(state?.phrase, "privatekey.txt");
+                }}
+              >
+                Download <CloudDownloadOutlined />
+              </Button>
             </Descriptions.Item>
           </Descriptions>
         </Col>

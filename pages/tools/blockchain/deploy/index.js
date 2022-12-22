@@ -1,11 +1,12 @@
 import { useWeb3Modal } from "@web3modal/react";
 import { Button, Col, Input, message, Row, Table } from "antd";
 import Erc20Builder from "builder/Erc20Builder";
+import BaseModal from "components/base/BaseModal";
 import { read, save } from "data/LocalStorageProvider";
 import { ethers } from "ethers";
 import useObjectState from "hooks/useObjectState";
 import { isEmpty } from "lodash";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { DeployWrapper } from "styles/styled";
 import { deployContract, toDecimal } from "utils";
 import { useAccount, useDisconnect } from "wagmi";
@@ -15,7 +16,7 @@ function Deploy() {
   const { connector, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const [state, setState] = useObjectState();
-
+  const mintRef = useRef();
   //Functions
   const deployNewERC20 = async () => {
     let signer = await connector.getSigner();
@@ -72,7 +73,7 @@ function Deploy() {
 
   const columns = [
     { title: "Address", dataIndex: "address", key: "address" },
-    { title: "Owner", dataIndex: "owner", key: "owner" },
+    // { title: "Owner", dataIndex: "owner", key: "owner" },
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Symbol", dataIndex: "symbol", key: "symbol" },
     { title: "Balance Of", dataIndex: "balanceOf", key: "balanceOf" },
@@ -84,10 +85,11 @@ function Deploy() {
   }, []);
 
   useEffect(() => {
-    if (!isEmpty(state.tokens) && isConnected) {
+    if (!isEmpty(state.tokens) && connector) {
       getContracts();
     }
-  }, [state.tokens, isConnected]);
+  }, [state.tokens, connector]);
+
   return (
     <DeployWrapper>
       <Row gutter={[24, 24]}>
@@ -124,6 +126,7 @@ function Deploy() {
           />
         </Col>
       </Row>
+      <BaseModal ref={mintRef} />
     </DeployWrapper>
   );
 }

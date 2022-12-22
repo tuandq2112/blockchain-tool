@@ -68,6 +68,75 @@ export default function App({ Component, pageProps }) {
           themeColor={"blue"}
           themeMode={"light"}
           themeBackground={"gradient"}
+          mobileWallets={[
+            {
+              id: "trust",
+              name: "Trust Wallet",
+              links: {
+                native: "trust://",
+                universal: "https://link.trustwallet.com",
+              },
+            },
+            {
+              id: "rainbow",
+              name: "Rainbow",
+              links: { native: "rainbow://", universal: "https://rainbow.me" },
+            },
+            {
+              id: "zerion",
+              name: "Zerion",
+              links: {
+                native: "zerion://",
+                universal: "https://wallet.zerion.io",
+              },
+            },
+            {
+              id: "tokenary",
+              name: "Tokenary",
+              links: {
+                native: "tokenary://",
+                universal: "https://tokenary.io",
+              },
+            },
+          ]}
+          // Custom Linking Desktop Wallets
+          desktopWallets={[
+            {
+              id: "ledger",
+              name: "Ledger Live",
+              links: {
+                native: "ledgerlive://",
+                universal: "https://www.ledger.com",
+              },
+            },
+            {
+              id: "zerion",
+              name: "Zerion",
+              links: {
+                native: "zerion://",
+                universal: "https://wallet.zerion.io",
+              },
+            },
+            {
+              id: "tokenary",
+              name: "Tokenary",
+              links: {
+                native: "tokenary://",
+                universal: "https://tokenary.io",
+              },
+            },
+            {
+              id: "oreid",
+              name: "OREID",
+              links: {
+                native: "",
+                universal: "https://www.oreid.io/",
+              },
+            },
+          ]}
+          // Custom Wallet Images
+
+          // Custom Chain Images
         />
       )}
     </>

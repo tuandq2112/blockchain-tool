@@ -64,3 +64,13 @@ export const deployContract = async (args, fileBuild, account) => {
     }
   });
 };
+export const toDecimal = (amount) => {
+  return amount ? ethers.utils.formatUnits(amount, "ether") : 0;
+};
+
+export const toNumber = (amount) => {
+  return amount ? ethers.utils.formatUnits(amount, 0) : 0;
+};
+export const parseEther = (amount) => {
+  return ethers.utils.parseEther(amount);
+};

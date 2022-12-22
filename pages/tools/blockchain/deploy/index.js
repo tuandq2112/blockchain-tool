@@ -1,21 +1,30 @@
 import { useWeb3Modal } from "@web3modal/react";
-import { Button, Col, Input, message, Row } from "antd";
+import { Button, Col, Input, message, Row, Table } from "antd";
 import Erc20Builder from "builder/Erc20Builder";
+import { read, save } from "data/LocalStorageProvider";
+import { ethers } from "ethers";
 import useObjectState from "hooks/useObjectState";
+import { isEmpty } from "lodash";
+import { useEffect } from "react";
 import { DeployWrapper } from "styles/styled";
-import { deployContract } from "utils";
+import { deployContract, toDecimal } from "utils";
 import { useAccount, useDisconnect } from "wagmi";
 function Deploy() {
+  //Hooks
   const { isOpen, open, close } = useWeb3Modal();
   const { connector, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const [state, setState] = useObjectState();
 
+  //Functions
   const deployNewERC20 = async () => {
     let signer = await connector.getSigner();
     deployContract([state.name, state.symbol], Erc20Builder, signer)
       .then((res) => {
-        console.log(res);
+        let newToken = Object.assign([], state.tokens);
+        newToken.push(res.address);
+        saveData(newToken);
+        setState({ tokens: newToken });
         message.success("Create successfully!");
       })
       .catch((err) => {
@@ -25,10 +34,63 @@ function Deploy() {
   const handleChangeInput = (event) => {
     setState({ [event.target.name]: event.target.value });
   };
+
+  const saveData = (newTokens = []) => {
+    save("tokens", newTokens);
+  };
+
+  const getData = () => {
+    let tokens = read("tokens");
+    setState({ tokens });
+  };
+
+  const getContracts = async () => {
+    let tokens = state.tokens;
+    let signer = await connector.getSigner();
+
+    let contracts = await Promise.all(
+      tokens.map(async (item) => {
+        let contract = new ethers.Contract(item, Erc20Builder.abi, signer);
+        let balanceOf = await contract.balanceOf(await signer.getAddress());
+        let name = await contract.name();
+        let symbol = await contract.symbol();
+        let address = item;
+
+        return {
+          address,
+          name,
+          symbol,
+          balanceOf: toDecimal(balanceOf),
+          contract,
+        };
+      })
+    );
+    setState({ contracts });
+  };
+
+  const columns = [
+    { title: "Address", dataIndex: "address", key: "address" },
+    { title: "Name", dataIndex: "name", key: "name" },
+    { title: "Symbol", dataIndex: "symbol", key: "symbol" },
+    { title: "Balance Of", dataIndex: "balanceOf", key: "balanceOf" },
+    { title: "Action", dataIndex: "contract", key: "contract" },
+
+  ];
+  //Effects
+  useEffect(() => {
+    getData();
+  }, []);
+
+  useEffect(() => {
+    if (!isEmpty(state.tokens)) {
+      getContracts();
+    }
+  }, [state.tokens]);
   return (
     <DeployWrapper>
       <Row gutter={[24, 24]}>
-        <Col span={8}>
+        <Col span={4}>
+          <h1>Connect wallet</h1>
           {!isConnected ? (
             <Button onClick={open}>Connect wallet</Button>
           ) : (
@@ -36,7 +98,7 @@ function Deploy() {
           )}{" "}
         </Col>
         <Col span={8}>
-          {" "}
+          <h1>Deploy new token ERC20</h1>{" "}
           <Input
             placeholder="Name"
             onChange={handleChangeInput}
@@ -51,7 +113,14 @@ function Deploy() {
           ></Input>
           <Button onClick={deployNewERC20}>Deploy erc20 contract</Button>
         </Col>
-        <Col span={8}></Col>
+        <Col span={12}>
+          <h1>Tokens</h1>{" "}
+          <Table
+            dataSource={state?.contracts}
+            rowKey="address"
+            columns={columns}
+          />
+        </Col>
       </Row>
     </DeployWrapper>
   );

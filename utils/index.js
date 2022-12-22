@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ContractFactory, ethers } from "ethers";
 export const phraseToPrivateKey = (phrase) => {
   let wallet = ethers.Wallet.fromMnemonic(phrase);
   let signingKey = wallet._signingKey();
@@ -44,6 +44,21 @@ export const loopCreateBeautyWallet = (
 
       let endTime = new Date();
       resolve({ startTime, endTime, wallet });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+export const deployContract = async (args, fileBuild, account) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const factory = new ContractFactory(
+        fileBuild.abi,
+        fileBuild.bytecode,
+        account
+      );
+      const contract = await factory.deploy(...args);
+      resolve(contract);
     } catch (error) {
       reject(error);
     }

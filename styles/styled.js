@@ -29,3 +29,6 @@ export const ToolsWrapper = styled.div``;
 export const BeautyWalletWrapper = styled.div`
   ${baseWrapperCss}
 `;
+export const DeployWrapper = styled.div`
+  ${baseWrapperCss}
+`;

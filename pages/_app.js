@@ -9,16 +9,7 @@ import { Web3Modal } from "@web3modal/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { configureChains, createClient, WagmiConfig } from "wagmi";
-import {
-  arbitrum,
-  avalanche,
-  bsc,
-  bscTestnet,
-  fantom,
-  mainnet,
-  optimism,
-  polygon,
-} from "wagmi/chains";
+import { bsc, bscTestnet } from "wagmi/chains";
 
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!process.env.NEXT_PUBLIC_PROJECT_ID) {
@@ -71,7 +62,13 @@ export default function App({ Component, pageProps }) {
 
       {/* Demo purposes only, if custom path is set, we initialize different Web3Modal instance */}
       {pathname === "/custom" ? null : (
-        <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
+        <Web3Modal
+          projectId={projectId}
+          ethereumClient={ethereumClient}
+          themeColor={"blue"}
+          themeMode={"light"}
+          themeBackground={"gradient"}
+        />
       )}
     </>
   );

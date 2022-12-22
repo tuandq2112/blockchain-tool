@@ -54,6 +54,7 @@ function Deploy() {
         let balanceOf = await contract.balanceOf(await signer.getAddress());
         let name = await contract.name();
         let symbol = await contract.symbol();
+        let owner = await contract.owner();
         let address = item;
 
         return {
@@ -62,6 +63,7 @@ function Deploy() {
           symbol,
           balanceOf: toDecimal(balanceOf),
           contract,
+          owner,
         };
       })
     );
@@ -70,11 +72,11 @@ function Deploy() {
 
   const columns = [
     { title: "Address", dataIndex: "address", key: "address" },
+    { title: "Owner", dataIndex: "owner", key: "owner" },
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Symbol", dataIndex: "symbol", key: "symbol" },
     { title: "Balance Of", dataIndex: "balanceOf", key: "balanceOf" },
     { title: "Action", dataIndex: "contract", key: "contract" },
-
   ];
   //Effects
   useEffect(() => {
@@ -82,10 +84,10 @@ function Deploy() {
   }, []);
 
   useEffect(() => {
-    if (!isEmpty(state.tokens)) {
+    if (!isEmpty(state.tokens) && isConnected) {
       getContracts();
     }
-  }, [state.tokens]);
+  }, [state.tokens, isConnected]);
   return (
     <DeployWrapper>
       <Row gutter={[24, 24]}>
@@ -97,7 +99,7 @@ function Deploy() {
             <Button onClick={disconnect}>Disconnect</Button>
           )}{" "}
         </Col>
-        <Col span={8}>
+        <Col span={6}>
           <h1>Deploy new token ERC20</h1>{" "}
           <Input
             placeholder="Name"
@@ -113,7 +115,7 @@ function Deploy() {
           ></Input>
           <Button onClick={deployNewERC20}>Deploy erc20 contract</Button>
         </Col>
-        <Col span={12}>
+        <Col span={14}>
           <h1>Tokens</h1>{" "}
           <Table
             dataSource={state?.contracts}

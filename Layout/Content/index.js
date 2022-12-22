@@ -4,7 +4,6 @@ import { ContentWrapper } from "./styled";
 
 function Content({ children }) {
   const router = useRouter()
-  console.log(router);
   return (
     <ContentWrapper>
       <Breadcrumb>

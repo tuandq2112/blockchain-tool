@@ -95,7 +95,7 @@ function Deploy() {
   return (
     <DeployWrapper>
       <Row gutter={[24, 24]}>
-        <Col span={4}>
+        <Col lg={4} xs={24}>
           <h1>Connect wallet</h1>
           {!isConnected ? (
             <Button onClick={open} type="primary">
@@ -107,7 +107,7 @@ function Deploy() {
             </Button>
           )}{" "}
         </Col>
-        <Col span={6}>
+        <Col lg={6} xs={24}>
           <h1>Deploy new token ERC20</h1>{" "}
           <Input
             placeholder="Name"
@@ -125,7 +125,7 @@ function Deploy() {
             Deploy erc20 contract
           </Button>
         </Col>
-        <Col span={14}>
+        <Col lg={14} xs={24}>
           <h1>Tokens</h1>{" "}
           <Table
             dataSource={state?.contracts}

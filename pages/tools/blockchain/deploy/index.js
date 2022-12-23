@@ -19,6 +19,8 @@ function Deploy() {
   const mintRef = useRef();
   //Functions
   const deployNewERC20 = async () => {
+    debugger;
+
     let signer = await connector.getSigner();
     deployContract([state.name, state.symbol], Erc20Builder, signer)
       .then((res) => {
@@ -119,7 +121,9 @@ function Deploy() {
             name="symbol"
             value={state.symbol}
           ></Input>
-          <Button onClick={deployNewERC20}>Deploy erc20 contract</Button>
+          <Button onClick={deployNewERC20} disabled={!isConnected}>
+            Deploy erc20 contract
+          </Button>
         </Col>
         <Col span={14}>
           <h1>Tokens</h1>{" "}

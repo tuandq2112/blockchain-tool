@@ -12,7 +12,7 @@ const baseWrapperCss = css`
     color: white;
     background: #0077b6 !important;
     box-shadow: 0px 5px 0px #023e8a;
-    transition-duration: .2s;
+    transition-duration: 0.2s;
 
     &:hover {
       color: white;
@@ -21,6 +21,12 @@ const baseWrapperCss = css`
     &:active {
       transform: translateY(5px);
       box-shadow: none;
+    }
+    &:disabled {
+      filter: brightness(0.5);
+      box-shadow: none;
+      transform: none;
+      /* cursor: none; */
     }
   }
 `;

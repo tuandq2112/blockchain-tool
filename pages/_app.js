@@ -6,8 +6,10 @@ import {
   walletConnectProvider,
 } from "@web3modal/ethereum";
 import { Web3Modal } from "@web3modal/react";
+import { nonWeb3ModalPaths } from "constants/global";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { GlobalStyled } from "styles/styled";
 import { configureChains, createClient, WagmiConfig } from "wagmi";
 import { bsc, bscTestnet } from "wagmi/chains";
 
@@ -52,6 +54,7 @@ export default function App({ Component, pageProps }) {
 
   return (
     <>
+      <GlobalStyled />
       {ready ? (
         <WagmiConfig client={wagmiClient}>
           <CustomLayout {...pageProps}>
@@ -60,8 +63,7 @@ export default function App({ Component, pageProps }) {
         </WagmiConfig>
       ) : null}
 
-      {/* Demo purposes only, if custom path is set, we initialize different Web3Modal instance */}
-      {pathname === "/custom" ? null : (
+      {!nonWeb3ModalPaths.includes(pathname) && (
         <Web3Modal
           projectId={projectId}
           ethereumClient={ethereumClient}
@@ -134,9 +136,6 @@ export default function App({ Component, pageProps }) {
               },
             },
           ]}
-          // Custom Wallet Images
-
-          // Custom Chain Images
         />
       )}
     </>

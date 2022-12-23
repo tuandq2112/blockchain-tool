@@ -6,12 +6,18 @@ export const FooterWrapper = styled.div`
   position: fixed;
   bottom: 0;
   width: 100%;
-  background: #caf0f8;
+  background: #023e8a;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 0 20px 0 20px;
+  padding: 20px;
   * {
-    color: #03045E !important;
+    color: white !important;
+  }
+  .ant-descriptions-item {
+    padding: none;
+  }
+  .ant-descriptions-item-content {
+    white-space: nowrap;
   }
 `;

@@ -12,9 +12,7 @@ import { deployContract, toDecimal } from "utils";
 import { useAccount, useDisconnect } from "wagmi";
 function Deploy() {
   //Hooks
-  const { isOpen, open, close } = useWeb3Modal();
   const { connector, isConnected } = useAccount();
-  const { disconnect } = useDisconnect();
   const [state, setState] = useObjectState();
   const mintRef = useRef();
   //Functions
@@ -95,19 +93,7 @@ function Deploy() {
   return (
     <DeployWrapper>
       <Row gutter={[24, 24]}>
-        <Col lg={4} xs={24}>
-          <h1>Connect wallet</h1>
-          {!isConnected ? (
-            <Button onClick={open} type="primary">
-              Connect wallet
-            </Button>
-          ) : (
-            <Button onClick={disconnect} type="primary">
-              Disconnect
-            </Button>
-          )}{" "}
-        </Col>
-        <Col lg={6} xs={24}>
+        <Col lg={12} xs={24}>
           <h1>Deploy new token ERC20</h1>{" "}
           <Input
             placeholder="Name"
@@ -125,7 +111,7 @@ function Deploy() {
             Deploy erc20 contract
           </Button>
         </Col>
-        <Col lg={14} xs={24}>
+        <Col span={24}>
           <h1>Tokens</h1>{" "}
           <Table
             dataSource={state?.contracts}

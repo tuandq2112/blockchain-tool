@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled, { createGlobalStyle, css } from "styled-components";
 
 const baseWrapperCss = css`
   display: flex;
@@ -7,8 +7,10 @@ const baseWrapperCss = css`
   flex-direction: column;
   padding: 10px;
   height: 100%;
+`;
 
-  .ant-btn {
+export const GlobalStyled = createGlobalStyle`
+ .ant-btn {
     color: white;
     background: #0077b6 !important;
     box-shadow: 0px 5px 0px #023e8a;
@@ -26,10 +28,9 @@ const baseWrapperCss = css`
       filter: brightness(0.5);
       box-shadow: none;
       transform: none;
-      /* cursor: none; */
+      color: white;
     }
-  }
-`;
+  }`;
 export const HomeWrapper = styled.div``;
 export const PrivateWrapper = styled.div`
   ${baseWrapperCss}

@@ -9,6 +9,8 @@ export const HeaderWrapper = styled.div`
   background-color: #03045e !important;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 0px 20px;
 
   /* * {
     background-color: #03045e !important;

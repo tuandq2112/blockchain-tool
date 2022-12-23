@@ -96,9 +96,13 @@ function Deploy() {
         <Col span={4}>
           <h1>Connect wallet</h1>
           {!isConnected ? (
-            <Button onClick={open}>Connect wallet</Button>
+            <Button onClick={open} type="primary">
+              Connect wallet
+            </Button>
           ) : (
-            <Button onClick={disconnect}>Disconnect</Button>
+            <Button onClick={disconnect} type="primary">
+              Disconnect
+            </Button>
           )}{" "}
         </Col>
         <Col span={6}>

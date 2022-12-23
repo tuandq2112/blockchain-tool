@@ -92,5 +92,9 @@ function BeautyWallet() {
     </BeautyWalletWrapper>
   );
 }
-
+export async function getStaticProps() {
+  return {
+    props: {},
+  };
+}
 export default BeautyWallet;

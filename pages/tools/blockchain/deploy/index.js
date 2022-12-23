@@ -130,5 +130,9 @@ function Deploy() {
     </DeployWrapper>
   );
 }
-
+export async function getStaticProps() {
+  return {
+    props: {},
+  };
+}
 export default Deploy;

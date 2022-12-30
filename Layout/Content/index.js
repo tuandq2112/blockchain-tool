@@ -23,7 +23,6 @@ function Content({ children }) {
     if (router?.pathname) getBreadcrumbData();
   }, [router]);
 
-  console.log(state);
   return (
     <ContentWrapper>
       <Breadcrumb>

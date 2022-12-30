@@ -8,7 +8,6 @@ function Header() {
   const { connector, isConnected } = useAccount();
   const { isOpen, open, close } = useWeb3Modal();
   const { disconnect } = useDisconnect();
-  console.log(isConnected);
   return (
     <HeaderWrapper>
       <CustomMenu

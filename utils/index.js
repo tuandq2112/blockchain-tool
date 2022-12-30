@@ -58,7 +58,7 @@ export const deployContract = async (args, fileBuild, account) => {
         account
       );
       const contract = await factory.deploy(...args);
-      resolve(contract);
+      resolve(await contract.deployed());
     } catch (error) {
       reject(error);
     }

@@ -1,4 +1,3 @@
-import { useWeb3Modal } from "@web3modal/react";
 import { Button, Col, Input, message, Row, Table } from "antd";
 import Erc20Builder from "builder/Erc20Builder";
 import BaseModal from "components/base/BaseModal";
@@ -9,7 +8,7 @@ import { isEmpty } from "lodash";
 import { useEffect, useRef } from "react";
 import { DeployWrapper } from "styles/styled";
 import { deployContract, toDecimal } from "utils";
-import { useAccount, useDisconnect } from "wagmi";
+import { useAccount } from "wagmi";
 function Deploy() {
   //Hooks
   const { connector, isConnected } = useAccount();
@@ -17,8 +16,7 @@ function Deploy() {
   const mintRef = useRef();
   //Functions
   const deployNewERC20 = async () => {
-    debugger;
-
+    
     let signer = await connector.getSigner();
     deployContract([state.name, state.symbol], Erc20Builder, signer)
       .then((res) => {
@@ -37,18 +35,17 @@ function Deploy() {
   };
 
   const saveData = (newTokens = []) => {
-    save("tokens", newTokens);
+    save(state.chainId, newTokens);
   };
 
   const getData = () => {
-    let tokens = read("tokens");
+    let tokens = read(state.chainId);
     setState({ tokens });
   };
 
   const getContracts = async () => {
     let tokens = state.tokens;
     let signer = await connector.getSigner();
-
     let contracts = await Promise.all(
       tokens.map(async (item) => {
         let contract = new ethers.Contract(item, Erc20Builder.abi, signer);
@@ -71,6 +68,10 @@ function Deploy() {
     setState({ contracts });
   };
 
+  const getChainId = async () => {
+    setState({ chainId: await connector.getChainId() });
+  };
+
   const columns = [
     { title: "Address", dataIndex: "address", key: "address" },
     // { title: "Owner", dataIndex: "owner", key: "owner" },
@@ -80,13 +81,19 @@ function Deploy() {
     { title: "Action", dataIndex: "contract", key: "contract" },
   ];
   //Effects
-  useEffect(() => {
-    getData();
-  }, []);
 
   useEffect(() => {
-    if (!isEmpty(state.tokens) && connector) {
-      getContracts();
+    if (state.chainId) {
+      getData();
+    }
+  }, [state.chainId]);
+
+  useEffect(() => {
+    if (connector) {
+      if (!isEmpty(state.tokens)) {
+        getContracts();
+      }
+      getChainId();
     }
   }, [state.tokens, connector]);
 

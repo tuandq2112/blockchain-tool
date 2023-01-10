@@ -42,7 +42,7 @@ const BaseModal = (
   return (
     <BaseModalWrapper
       title={title || "Title"}
-      visible={state.visible}
+      open={state.visible}
       onCancel={onCancel}
       closable={true}
       footer={

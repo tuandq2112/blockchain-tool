@@ -64,6 +64,10 @@ export const deployContract = async (args, fileBuild, account) => {
     }
   });
 };
+
+export const getContractInstance = (address, abi, signer) => {
+  return new ethers.Contract(address, abi, signer);
+};
 export const toDecimal = (amount) => {
   return amount ? ethers.utils.formatUnits(amount, "ether") : 0;
 };

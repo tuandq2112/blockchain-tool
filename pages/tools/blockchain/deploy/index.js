@@ -1,4 +1,4 @@
-import { Button, Col, Input, message, Row, Table } from "antd";
+import { Button, Col, Form, Input, message, Row, Table } from "antd";
 import Erc20Builder from "builder/Erc20Builder";
 import BaseModal from "components/base/BaseModal";
 import { read, save } from "data/LocalStorageProvider";
@@ -7,7 +7,12 @@ import useObjectState from "hooks/useObjectState";
 import { isEmpty } from "lodash";
 import { useEffect, useRef } from "react";
 import { DeployWrapper } from "styles/styled";
-import { deployContract, toDecimal } from "utils";
+import {
+  deployContract,
+  getContractInstance,
+  parseEther,
+  toDecimal,
+} from "utils";
 import { useAccount } from "wagmi";
 function Deploy() {
   //Hooks
@@ -16,7 +21,6 @@ function Deploy() {
   const mintRef = useRef();
   //Functions
   const deployNewERC20 = async () => {
-    
     let signer = await connector.getSigner();
     deployContract([state.name, state.symbol], Erc20Builder, signer)
       .then((res) => {
@@ -71,6 +75,36 @@ function Deploy() {
   const getChainId = async () => {
     setState({ chainId: await connector.getChainId() });
   };
+  const submit = async (record) => {
+    let erc20 = getContractInstance(
+      record.address,
+      Erc20Builder.abi,
+      await connector.getSigner()
+    );
+    await form
+      .validateFields()
+      .then(async (res) => {
+        await erc20
+          .mint(res.address, parseEther(res.amount))
+          .then((res) => {
+            return res.wait();
+          })
+          .then((res) => {
+            message.success("Mint success!");
+            getContracts();
+          });
+      })
+      .catch((err) => {
+        message.error("Mint fail!");
+      });
+  };
+  const showModal = (record) => () => {
+    mintRef?.current?.show({
+      submit: () => {
+        submit(record);
+      },
+    });
+  };
 
   const columns = [
     { title: "Address", dataIndex: "address", key: "address" },
@@ -78,9 +112,37 @@ function Deploy() {
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Symbol", dataIndex: "symbol", key: "symbol" },
     { title: "Balance Of", dataIndex: "balanceOf", key: "balanceOf" },
-    { title: "Action", dataIndex: "contract", key: "contract" },
+    {
+      title: "Action",
+      dataIndex: "contract",
+      key: "contract",
+      render: (_, record) => {
+        return <Button onClick={showModal(record)}>Action</Button>;
+      },
+    },
   ];
   //Effects
+  const [form] = Form.useForm();
+  const renderForm = () => {
+    return (
+      <Form layout="vertical" form={form}>
+        <Form.Item
+          name={"address"}
+          label="Address"
+          rules={[{ required: true, message: "Please input address!" }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name={"amount"}
+          label="Amount"
+          rules={[{ required: true, message: "Please input amount!" }]}
+        >
+          <Input />
+        </Form.Item>
+      </Form>
+    );
+  };
 
   useEffect(() => {
     if (state.chainId) {
@@ -127,7 +189,12 @@ function Deploy() {
           />
         </Col>
       </Row>
-      <BaseModal ref={mintRef} />
+      <BaseModal
+        title="Mint (only owner)"
+        submitText="Mint"
+        ref={mintRef}
+        renderForm={renderForm}
+      />
     </DeployWrapper>
   );
 }

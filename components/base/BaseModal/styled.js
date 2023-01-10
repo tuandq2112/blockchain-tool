@@ -31,12 +31,12 @@ export const BaseModalWrapper = styled(Modal)`
     .ant-modal-footer {
       display: flex;
       justify-content: end;
-      .delete__btn {
+      /* .delete__btn {
         border-radius: 20px;
       }
       .submit__btn {
         width: auto;
-      }
+      } */
     }
   }
 `;

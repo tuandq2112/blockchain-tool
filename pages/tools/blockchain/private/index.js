@@ -1,11 +1,14 @@
 import { Button, Col, Input, message, Row } from "antd";
 import { HighLightText } from "components/styled";
 import useObjectState from "hooks/useObjectState";
+import { useSelector } from "react-redux";
 import { PrivateWrapper } from "styles/styled";
 import { phraseToPrivateKey } from "utils";
 function Private() {
   const [state, setState] = useObjectState({ checked: false });
+  const auth = useSelector((state) => state.auth);
 
+  console.log(auth);
   return (
     <PrivateWrapper>
       <HighLightText>Convert phrase to private key</HighLightText>

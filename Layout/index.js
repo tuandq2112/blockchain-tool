@@ -9,7 +9,7 @@ export default function CustomLayout({ children }) {
     <RootWrapper>
       <Header />
       <Content>{children} </Content>
-      <Footer />
+      {/* <Footer /> */}
     </RootWrapper>
   );
 }

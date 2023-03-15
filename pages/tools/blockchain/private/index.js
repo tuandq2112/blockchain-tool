@@ -8,7 +8,6 @@ function Private() {
   const [state, setState] = useObjectState({ checked: false });
   const auth = useSelector((state) => state.auth);
 
-  console.log(auth);
   return (
     <PrivateWrapper>
       <HighLightText>Convert phrase to private key</HighLightText>

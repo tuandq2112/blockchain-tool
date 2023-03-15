@@ -55,3 +55,17 @@ export const BeautyWalletWrapper = styled.div`
 export const DeployWrapper = styled.div`
   ${baseWrapperCss}
 `;
+export const NotFoundPageWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+`;
+export const ProfileWrapper = styled.div`
+  /* display: "flex" !important; */
+  /* justify-content: center; */
+  .content {
+    margin: auto;
+    max-width: 700px;
+  }
+`;

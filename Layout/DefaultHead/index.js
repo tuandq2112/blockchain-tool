@@ -4,8 +4,8 @@ function DefaultHead() {
   return (
     <Head>
       <title>Welcome Naut's blogs</title>
-      <link rel="shortcut icon" href="/logohead.png" />
-      <meta charset="UTF-8" />
+      <link rel="shortcut icon" href="/head.png" />
+      <meta charSet="UTF-8" />
       <meta name="description" content="Free some web3 tools!" />
       <meta name="keywords" content="web3, tools,..." />
       <meta name="author" content="tuandq" />

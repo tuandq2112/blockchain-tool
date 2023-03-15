@@ -38,7 +38,10 @@ const BaseModal = (
     }
     setState({ visible: false });
   };
-
+  const onOk = async () => {
+    await submitRef.current();
+    if (!ignoreCancel) setState({ visible: false });
+  };
   return (
     <BaseModalWrapper
       title={title || "Title"}
@@ -54,15 +57,7 @@ const BaseModal = (
             </Button>
           )}
           {!ignoreOkButton && (
-            <Button
-              className="submit__btn"
-              onClick={async () => {
-                try {
-                  await submitRef.current();
-                  if (!ignoreCancel) onCancel();
-                } catch (err) {}
-              }}
-            >
+            <Button className="submit__btn" onClick={onOk}>
               {submitText}
             </Button>
           )}

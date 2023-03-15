@@ -94,7 +94,7 @@ function Header() {
             {!isConnected ? (
               <AvatarDefaultIcon onClick={open} />
             ) : (
-              <AvatarLoginIcon onClick={disconnect} />
+              <AvatarLoginIcon onClick={open} />
             )}{" "}
           </Tooltip>
         </Dropdown>

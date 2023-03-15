@@ -1,3 +1,4 @@
 import auth from "./auth";
+import file from "./file";
 
-export { auth };
+export { auth ,file};

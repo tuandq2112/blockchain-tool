@@ -1,9 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-
 const MenuConfig = [
   {
-    label: <Image alt="" src={"/logoweb.png"} width="40" height="50" />,
+    label: (
+      <Image
+        alt="Picture of the author"
+        src={"/logoweb.png"}
+        width="40"
+        height="50"
+      />
+    ),
     key: 1,
   },
   {
@@ -31,11 +37,7 @@ const MenuConfig = [
             key: "tool-blockchain-2",
           },
           {
-            label: (
-              <Link href={"/tools/blockchain/deploy"}>
-                Deploy ERC20
-              </Link>
-            ),
+            label: <Link href={"/tools/blockchain/deploy"}>Deploy ERC20</Link>,
             key: "tool-blockchain-3",
           },
         ],
@@ -43,4 +45,15 @@ const MenuConfig = [
     ],
   },
 ];
-export default MenuConfig;
+
+const AvatarDropdownConfig = [
+  {
+    key: "1",
+    label: <Link href={"/profile"}>Profile</Link>,
+  },
+  {
+    key: "2",
+    label: <Link href={"/collection"}>Collection</Link>,
+  },
+];
+export { MenuConfig, AvatarDropdownConfig };

@@ -4,50 +4,17 @@ import {
   AvatarDefaultIcon,
   AvatarLoginIcon,
   CardIcon,
-  WalletIcon
+  WalletIcon,
 } from "assets/svg";
-import MenuConfig from "constants/menu";
+import BaseModal from "components/base/BaseModal";
+import { AvatarDropdownConfig, MenuConfig } from "constants/menu";
 import useObjectState from "hooks/useObjectState";
+import useVerifyAuth from "hooks/useVerifyAuth";
+import { createRef } from "react";
 import { useAccount, useDisconnect } from "wagmi";
 import { CustomMenu, HeaderWrapper } from "./styled";
-const items = [
-  {
-    key: "1",
-    label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.antgroup.com"
-      >
-        1st menu item
-      </a>
-    ),
-  },
-  {
-    key: "2",
-    label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.aliyun.com"
-      >
-        2nd menu item
-      </a>
-    ),
-  },
-  {
-    key: "3",
-    label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.luohanacademy.com"
-      >
-        3rd menu item
-      </a>
-    ),
-  },
-];
+
+export const verifyRef = createRef();
 function Header() {
   /**
    * @hook
@@ -68,14 +35,14 @@ function Header() {
     setState({ cartOpen: false });
   };
 
-
   const openWalletDrawer = () => {
     setState({ walletOpen: true });
   };
-
+  const verifyAuthTest = useVerifyAuth({ action: openWalletDrawer });
   const closeWalletDrawer = () => {
     setState({ walletOpen: false });
   };
+
   return (
     <HeaderWrapper>
       <CustomMenu
@@ -85,21 +52,21 @@ function Header() {
       />
       <div>
         <Dropdown
-          menu={{ items }}
+          menu={{ items: AvatarDropdownConfig }}
           placement="bottom"
           disabled={!isConnected}
           trigger="hover"
         >
           <Tooltip title="Account" placement="left">
-            {!isConnected ? (
-              <AvatarDefaultIcon onClick={open} />
+            {isConnected ? (
+              <AvatarLoginIcon />
             ) : (
-              <AvatarLoginIcon onClick={disconnect} />
+              <AvatarDefaultIcon onClick={verifyAuthTest} />
             )}{" "}
           </Tooltip>
         </Dropdown>
 
-        <Tooltip title="Wallet" onClick={openWalletDrawer}>
+        <Tooltip title="Wallet" onClick={verifyAuthTest}>
           <WalletIcon />
         </Tooltip>
 
@@ -129,6 +96,7 @@ function Header() {
         <p>Some contents...</p>
         <p>Some contents...</p>
       </Drawer>
+      <BaseModal title="Welcome to OpenHeo" ref={verifyRef}></BaseModal>
     </HeaderWrapper>
   );
 }

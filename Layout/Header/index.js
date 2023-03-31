@@ -66,7 +66,7 @@ function Header() {
           </Tooltip>
         </Dropdown>
 
-        <Tooltip title="Wallet" onClick={verifyAuthTest}>
+        <Tooltip title="Wallet" onClick={open}>
           <WalletIcon />
         </Tooltip>
 

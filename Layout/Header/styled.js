@@ -11,7 +11,7 @@ export const HeaderWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 0px 20px;
-
+  border-bottom: 1px solid #58595a;
   /* * {
     background-color: #03045e !important;
   } */

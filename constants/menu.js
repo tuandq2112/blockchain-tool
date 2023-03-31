@@ -3,12 +3,14 @@ import Link from "next/link";
 const MenuConfig = [
   {
     label: (
-      <Image
-        alt="Picture of the author"
-        src={"/logoweb.png"}
-        width="40"
-        height="50"
-      />
+      <Link href={"/"}>
+        <Image
+          alt="Picture of the author"
+          src={"/logoweb.png"}
+          width="40"
+          height="50"
+        />{" "}
+      </Link>
     ),
     key: 1,
   },

@@ -31,7 +31,13 @@ export const GlobalStyled = createGlobalStyle`
       color: white;
     }
   }`;
-export const HomeWrapper = styled.div``;
+export const HomeWrapper = styled.div`
+  padding: 5%;
+  .title {
+    display: flex;
+    justify-content: center;
+  }
+`;
 export const PrivateWrapper = styled.div`
   ${baseWrapperCss}
   .switch {

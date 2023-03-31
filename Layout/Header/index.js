@@ -1,15 +1,9 @@
 import { useWeb3Modal } from "@web3modal/react";
 import { Drawer, Dropdown, Tooltip } from "antd";
-import {
-  AvatarDefaultIcon,
-  AvatarLoginIcon,
-  CardIcon,
-  WalletIcon,
-} from "assets/svg";
+import { AvatarLoginIcon, CardIcon, WalletIcon } from "assets/svg";
 import BaseModal from "components/base/BaseModal";
 import { AvatarDropdownConfig, MenuConfig } from "constants/menu";
 import useObjectState from "hooks/useObjectState";
-import useVerifyAuth from "hooks/useVerifyAuth";
 import { createRef } from "react";
 import { useAccount, useDisconnect } from "wagmi";
 import { CustomMenu, HeaderWrapper } from "./styled";
@@ -38,7 +32,6 @@ function Header() {
   const openWalletDrawer = () => {
     setState({ walletOpen: true });
   };
-  const verifyAuthTest = useVerifyAuth({ action: openWalletDrawer });
   const closeWalletDrawer = () => {
     setState({ walletOpen: false });
   };

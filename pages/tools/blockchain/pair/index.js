@@ -190,7 +190,7 @@ function Pair() {
           <br />
 
           <Button disabled={!state.amount || !isConnected} onClick={submit}>
-            Submit
+            Donate
           </Button>
         </Col>
       </Row>

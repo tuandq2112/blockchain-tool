@@ -42,6 +42,10 @@ const MenuConfig = [
             label: <Link href={"/tools/blockchain/deploy"}>Deploy ERC20</Link>,
             key: "tool-blockchain-3",
           },
+          {
+            label: <Link href={"/tools/blockchain/pair"}>Query From Pair</Link>,
+            key: "tool-blockchain-4",
+          },
         ],
       },
     ],

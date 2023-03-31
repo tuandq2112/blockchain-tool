@@ -12,65 +12,65 @@ const listAccount = [
     account2: "0x75EeF9903D172E8957062e32e969EC2b6792a12A",
     account3: "0xe3018e601C8Fbb83f1Be2d58f08F309c3D390546",
   },
-  {
-    name: "Đặng Thị Thùy Dung",
-    account1: "0x3A1E2eB63EB823bb2F0f1c035B8a33C957023f9F",
-    account2: "0x932e8556c56aa8C5E9531777897Ea430CDc5078b",
-    account3: "0x690faF8EB7Ce16Ab322bd66C192740BB12D6e2A5",
-  },
-  {
-    name: "Nhữ Hương Quỳnh ",
-    account1: "0x24E7bAD7bB830b05e61bA6ff37f8a7d0eeFc1444",
-    account2: "0x05cd1325D1b5FDa893aDf3E7337880881B6feF3d",
-  },
-  {
-    name: "Lê Như Quỳnh",
-    account1: "0x78c8F4d7CEC386C655DF6b1f02a18288b62bdF90",
-  },
-  {
-    name: "Phạm Thị Thu Hiếu",
-    account1: "0xCc626CF5901525E81e41Db6d1246A41EAf9D16eB",
-  },
-  {
-    name: "Ngô Minh Tuấn",
-    account1: "0xb906da3C102aFaF2510FBe962e59f570f50F6D1c",
-  },
-  {
-    name: "Ngô Quang Hiếu",
-    account1: "0xff36EC5111640d09663a84d99cc4Ddac7ce32d6b",
-  },
-  {
-    name: "Đỗ Quốc Tuấn",
-    account1: "0x899Ca417d550c0875E0C94E1eDD67Bdab187DB31",
-  },
-  {
-    name: "Nguyễn Hoàng Hiếu",
-    account1: "0xA4f18e3C2307939a03584f29A01e850F4639c60f",
-  },
-  {
-    name: "Nguyễn Minh Duy",
-    account1: "0xf9dA4a329eb6E1852eC2BC8a2AFE6d818C151356",
-  },
-  {
-    name: "Vương Ngọc Mai",
-    account1: "0xfF8529020Be0837eC5744bb4AC4B46f5b088fED8",
-  },
-  {
-    name: "Trần Minh Đức",
-    account1: "0xd9866589145067D11275e0949F0aE60F867b68C0",
-  },
-  {
-    name: "Hoàng Minh Sơn",
-    account1: "0x8FFe488E12cEC67Fe1Fe8B4f3D731fAd89355d1c",
-  },
-  {
-    name: "Nguyễn Hương Giang",
-    account1: "0x69e37c6bae7ad952ad686c62afe3fa82642e98d8",
-  },
-  {
-    name: "Trần Thế Vượng",
-    account1: "0xbd15f97d58f8433a19686910fd9d6e966712ab6f",
-  },
+    {
+      name: "Đặng Thị Thùy Dung",
+      account1: "0x3A1E2eB63EB823bb2F0f1c035B8a33C957023f9F",
+      account2: "0x932e8556c56aa8C5E9531777897Ea430CDc5078b",
+      account3: "0x690faF8EB7Ce16Ab322bd66C192740BB12D6e2A5",
+    },
+    {
+      name: "Nhữ Hương Quỳnh ",
+      account1: "0x24E7bAD7bB830b05e61bA6ff37f8a7d0eeFc1444",
+      account2: "0x05cd1325D1b5FDa893aDf3E7337880881B6feF3d",
+    },
+    {
+      name: "Lê Như Quỳnh",
+      account1: "0x78c8F4d7CEC386C655DF6b1f02a18288b62bdF90",
+    },
+    {
+      name: "Phạm Thị Thu Hiếu",
+      account1: "0xCc626CF5901525E81e41Db6d1246A41EAf9D16eB",
+    },
+    {
+      name: "Ngô Minh Tuấn",
+      account1: "0xb906da3C102aFaF2510FBe962e59f570f50F6D1c",
+    },
+    {
+      name: "Ngô Quang Hiếu",
+      account1: "0xff36EC5111640d09663a84d99cc4Ddac7ce32d6b",
+    },
+    {
+      name: "Đỗ Quốc Tuấn",
+      account1: "0x899Ca417d550c0875E0C94E1eDD67Bdab187DB31",
+    },
+    {
+      name: "Nguyễn Hoàng Hiếu",
+      account1: "0xA4f18e3C2307939a03584f29A01e850F4639c60f",
+    },
+    {
+      name: "Nguyễn Minh Duy",
+      account1: "0xf9dA4a329eb6E1852eC2BC8a2AFE6d818C151356",
+    },
+    {
+      name: "Vương Ngọc Mai",
+      account1: "0xfF8529020Be0837eC5744bb4AC4B46f5b088fED8",
+    },
+    {
+      name: "Trần Minh Đức",
+      account1: "0xd9866589145067D11275e0949F0aE60F867b68C0",
+    },
+    {
+      name: "Hoàng Minh Sơn",
+      account1: "0x8FFe488E12cEC67Fe1Fe8B4f3D731fAd89355d1c",
+    },
+    {
+      name: "Nguyễn Hương Giang",
+      account1: "0x69e37c6bae7ad952ad686c62afe3fa82642e98d8",
+    },
+    {
+      name: "Trần Thế Vượng",
+      account1: "0xbd15f97d58f8433a19686910fd9d6e966712ab6f",
+    },
 ];
 
 function Pair() {
@@ -106,21 +106,15 @@ function Pair() {
         item.account1,
         item.account2,
         item.account3,
-        (preData.filter(
-          (subItem) =>
-            subItem.to?.toLowerCase() == item.account1?.toLowerCase() ||
-            subItem.from?.toLowerCase() == item.account1?.toLowerCase()
-        )?.length || 0) / 2,
-        (preData.filter(
-          (subItem) =>
-            subItem.to?.toLowerCase() == item.account2?.toLowerCase() ||
-            subItem.from?.toLowerCase() == item.account2?.toLowerCase()
-        )?.length || 0) / 2,
-        (preData.filter(
-          (subItem) =>
-            subItem.to?.toLowerCase() == item.account3?.toLowerCase() ||
-            subItem.from?.toLowerCase() == item.account3?.toLowerCase()
-        )?.length || 0) / 2,
+        preData.filter(
+          (subItem) => subItem.to?.toLowerCase() == item.account1?.toLowerCase()
+        )?.length || 0,
+        preData.filter(
+          (subItem) => subItem.to?.toLowerCase() == item.account2?.toLowerCase()
+        )?.length || 0,
+        preData.filter(
+          (subItem) => subItem.to?.toLowerCase() == item.account3?.toLowerCase()
+        )?.length || 0,
       ];
 
       return data;

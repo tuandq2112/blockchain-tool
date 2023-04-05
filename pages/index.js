@@ -1,6 +1,7 @@
 import { InboxOutlined } from "@ant-design/icons";
 import { Button, Col, Input, message, Row, Tabs, Upload } from "antd";
 import ListViewFunction from "components/ListViewFunction";
+import ListWriteFunction from "components/ListWriteFunction";
 import { HighLightText } from "components/styled";
 import { ethers } from "ethers";
 import useObjectState from "hooks/useObjectState";
@@ -25,13 +26,22 @@ export default function Home() {
           listFunction={state.abi.filter(
             (item) => item.type == "function" && item.stateMutability == "view"
           )}
+          smartContract={state.smartContract}
         />
       ),
     },
     {
       key: "2",
       label: `Write contract`,
-      children: `Content of Tab Pane 2`,
+      children: (
+        <ListWriteFunction
+          listFunction={state.abi.filter(
+            (item) =>
+              item.type == "function" && item.stateMutability == "nonpayable"
+          )}
+          smartContract={state.smartContract}
+        />
+      ),
     },
   ];
 

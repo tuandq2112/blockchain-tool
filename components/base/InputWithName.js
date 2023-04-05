@@ -5,7 +5,11 @@ function InputWithName({ inputData, onChange }) {
   return (
     <div>
       <p>{nameType}</p>
-      <Input placeholder={nameType} onChange={onChange}></Input>
+      <Input
+        placeholder={nameType}
+        onChange={onChange}
+        name={inputData.name}
+      ></Input>
     </div>
   );
 }

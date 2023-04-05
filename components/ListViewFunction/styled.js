@@ -1,4 +1,3 @@
-import { Collapse } from "antd";
 import styled from "styled-components";
 
-export const ListViewFunctionWrapper = styled(Collapse)``;
+export const ListViewFunctionWrapper = styled.div``;

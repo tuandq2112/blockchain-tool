@@ -1,11 +1,11 @@
-import FunctionView from "components/FunctionView";
+import FunctionWrite from "components/FunctionWrite";
 
-function ListViewFunction({ listFunction = [], smartContract }) {
+function ListWriteFunction({ listFunction = [], smartContract }) {
   return (
     <div>
       {listFunction.map((data, index) => {
         return (
-          <FunctionView
+          <FunctionWrite
             key={index}
             renderData={data}
             index={index}
@@ -17,4 +17,4 @@ function ListViewFunction({ listFunction = [], smartContract }) {
   );
 }
 
-export default ListViewFunction;
+export default ListWriteFunction;

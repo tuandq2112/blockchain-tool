@@ -57,12 +57,13 @@ export default function Home() {
           setState({ draftAbi: parsedData });
         };
         reader.readAsText(info.file.originFileObj);
-      }
-      if (info.file.status === "done") {
         message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
       }
+      // if (info.file.status === "done") {
+      //   message.success(`${info.file.name} file uploaded successfully`);
+      // } else if (info.file.status === "error") {
+      //   message.error(`${info.file.name} file upload failed.`);
+      // }
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);

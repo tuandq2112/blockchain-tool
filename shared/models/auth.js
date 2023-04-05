@@ -22,7 +22,6 @@ const auth = {
         AuthenticationProvider.login(data)
           .then((res) => {
             let data = res.data.data;
-            console.log(data);
             data.expirationDate = moment
               .unix(moment().unix() + data.expiresIn)
               .format("DD/MM/YYYY HH:mm:ss");

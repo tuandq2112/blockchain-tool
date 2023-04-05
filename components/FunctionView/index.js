@@ -9,7 +9,7 @@ import { isEmpty } from "lodash";
 function FunctionView({ renderData, index, smartContract }) {
   const [state, setState] = useObjectState({
     inputValues: {},
-    outputValues: {},
+    outputValues: [],
   });
 
   let isShowQuery = renderData.inputs.length > 0;
@@ -32,8 +32,9 @@ function FunctionView({ renderData, index, smartContract }) {
               renderData.outputs[0].type.startsWith("uint") ||
               renderData.outputs[0].type.startsWith("int")
             ) {
-              outputs = ethers.utils.formatUnits(outputs, 0);
+              outputs = [ethers.utils.formatUnits(outputs, 0)];
             }
+            outputs = [outputs];
           } else {
             for (let index = 0; index < renderData.outputs.length; index++) {
               const element = renderData.outputs[index];
@@ -49,12 +50,11 @@ function FunctionView({ renderData, index, smartContract }) {
               }
             }
           }
-          let newObject = Object.assign({}, state[functionKey]);
-          newObject.outputs = outputs;
-          setState({ [functionKey]: newObject });
+
+          setState({ outputValues: outputs });
         }
       } catch (error) {
-        message.error(JSON.stringify(error));
+        message.error(error.reason || error.message);
       }
     }
   };
@@ -69,8 +69,9 @@ function FunctionView({ renderData, index, smartContract }) {
           renderData.outputs[0].type.startsWith("uint") ||
           renderData.outputs[0].type.startsWith("int")
         ) {
-          outputs = [ethers.utils.formatUnits(outputs, 0)];
+          outputs = ethers.utils.formatUnits(outputs, 0);
         }
+        outputs = [outputs];
       } else {
         for (let index = 0; index < renderData.outputs.length; index++) {
           const element = renderData.outputs[index];
@@ -83,9 +84,10 @@ function FunctionView({ renderData, index, smartContract }) {
           }
         }
       }
+      console.log(outputs);
       setState({ outputValues: outputs });
     } catch (error) {
-      message.error(JSON.stringify(error));
+      message.error(error.reason || error.message);
     }
   };
   return (
@@ -116,7 +118,6 @@ function FunctionView({ renderData, index, smartContract }) {
         )}
 
         {renderData.outputs?.map((outputData, index) => {
-          console.log(outputData);
           return (
             <p key={index}>
               <span>{state.outputValues[index]}</span>

@@ -28,7 +28,7 @@ function FunctionWrite({ renderData, index, smartContract }) {
       let waitResponse = await response.wait();
       message.success(`Write function ${functionKey} successfully!`);
     } catch (error) {
-      message.error(JSON.stringify(error));
+      message.error(error.reason || error.message);
     } finally {
       setState({ loading: false });
     }
@@ -51,7 +51,11 @@ function FunctionWrite({ renderData, index, smartContract }) {
           );
         })}
         <br />
-        <Button onClick={handleQuery} loading={state.loading} disabled={state.loading}>
+        <Button
+          onClick={handleQuery}
+          loading={state.loading}
+          disabled={state.loading}
+        >
           Query
         </Button>
       </StyledCollapse.Panel>

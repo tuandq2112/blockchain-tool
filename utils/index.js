@@ -82,3 +82,39 @@ export const parseEther = (amount) => {
 export function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+const convertOneRecord = (typeData, values) => {
+  let type = typeData.type;
+  if (type.startsWith("uint") || type.startsWith("int")) {
+    return ethers.utils.formatUnits(values, 0);
+  } else if (type == "tuple[]") {
+    let components = typeData.components;
+    let result = [];
+    for (let i = 0; i < values.length; i++) {
+      let response = {};
+
+      for (let j = 0; j < components.length; j++) {
+        const component = components[j];
+        const name = component.name;
+        response[name] = convertOneRecord(component, values[i][name]);
+      }
+      result.push(response);
+    }
+    return result;
+  } else {
+    return values;
+  }
+};
+export function convertOutput(outputs, values) {
+  if (outputs.length == 1) {
+    return [convertOneRecord(outputs[0], values)];
+  } else {
+    let result = [];
+    for (let index = 0; index < outputs.length; index++) {
+      const output = outputs[index];
+      let data = convertOneRecord(output, values[output.name]);
+      result.push(data);
+    }
+
+    return result;
+  }
+}

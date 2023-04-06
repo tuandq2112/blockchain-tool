@@ -2,9 +2,9 @@ import { CaretRightOutlined } from "@ant-design/icons";
 import { Button, message } from "antd";
 import InputWithName from "components/base/InputWithName";
 import { StyledCollapse } from "components/styled";
-import { ethers } from "ethers";
 import useObjectState from "hooks/useObjectState";
 import { isEmpty } from "lodash";
+import { convertOutput } from "utils";
 
 function FunctionView({ renderData, index, smartContract }) {
   const [state, setState] = useObjectState({
@@ -25,33 +25,10 @@ function FunctionView({ renderData, index, smartContract }) {
       try {
         if (isEmpty(renderData.inputs)) {
           let functionKey = renderData.name;
-          let outputs = await smartContract[functionKey]();
-
-          if (renderData.outputs.length == 1) {
-            if (
-              renderData.outputs[0].type.startsWith("uint") ||
-              renderData.outputs[0].type.startsWith("int")
-            ) {
-              outputs = [ethers.utils.formatUnits(outputs, 0)];
-            }
-            outputs = [outputs];
-          } else {
-            for (let index = 0; index < renderData.outputs.length; index++) {
-              const element = renderData.outputs[index];
-
-              if (
-                element.startsWith("uint") ||
-                element.type.startsWith("int")
-              ) {
-                renderData.outputs[index] = ethers.utils.formatUnits(
-                  outputs[index],
-                  0
-                );
-              }
-            }
-          }
-
-          setState({ outputValues: outputs });
+          let values = await smartContract[functionKey]();
+          setState({
+            outputValues: convertOutput(renderData.outputs, values),
+          });
         }
       } catch (error) {
         message.error(error.reason || error.message);
@@ -63,29 +40,9 @@ function FunctionView({ renderData, index, smartContract }) {
       let functionKey = renderData.name;
       let inputKeys = renderData.inputs.map((item) => item.name);
       let inputs = inputKeys.map((item) => state.inputValues[item]);
-      let outputs = await smartContract[functionKey](...inputs);
-      if (renderData.outputs.length == 1) {
-        if (
-          renderData.outputs[0].type.startsWith("uint") ||
-          renderData.outputs[0].type.startsWith("int")
-        ) {
-          outputs = ethers.utils.formatUnits(outputs, 0);
-        }
-        outputs = [outputs];
-      } else {
-        for (let index = 0; index < renderData.outputs.length; index++) {
-          const element = renderData.outputs[index];
+      let values = await smartContract[functionKey](...inputs);
 
-          if (element.startsWith("uint") || element.type.startsWith("int")) {
-            renderData.outputs[index] = ethers.utils.formatUnits(
-              outputs[index],
-              0
-            );
-          }
-        }
-      }
-      console.log(outputs);
-      setState({ outputValues: outputs });
+      setState({ outputValues: convertOutput(renderData.outputs, values) });
     } catch (error) {
       message.error(error.reason || error.message);
     }
@@ -120,7 +77,11 @@ function FunctionView({ renderData, index, smartContract }) {
         {renderData.outputs?.map((outputData, index) => {
           return (
             <p key={index}>
-              <span>{state.outputValues[index]}</span>
+              <span>
+                {typeof state.outputValues[index] == "object"
+                  ? JSON.stringify(state.outputValues[index])
+                  : state.outputValues[index]}
+              </span>
               <span>: </span>
               <span>{outputData.type}</span>
             </p>

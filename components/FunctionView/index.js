@@ -1,11 +1,10 @@
-import { CaretRightOutlined } from "@ant-design/icons";
+import { CaretRightOutlined, CopyOutlined } from "@ant-design/icons";
 import { Button, message } from "antd";
 import InputWithName from "components/base/InputWithName";
 import { StyledCollapse } from "components/styled";
 import useObjectState from "hooks/useObjectState";
 import { isEmpty } from "lodash";
-import { convertOutput } from "utils";
-
+import { convertOutput, copyToClipBoard } from "utils";
 function FunctionView({ renderData, index, smartContract }) {
   const [state, setState] = useObjectState({
     inputValues: {},
@@ -47,6 +46,10 @@ function FunctionView({ renderData, index, smartContract }) {
       message.error(error.reason || error.message);
     }
   };
+
+  const saveJson = (data) => () => {
+    copyToClipBoard(JSON.stringify(data));
+  };
   return (
     <StyledCollapse
       bordered={false}
@@ -77,13 +80,29 @@ function FunctionView({ renderData, index, smartContract }) {
         {renderData.outputs?.map((outputData, index) => {
           return (
             <p key={index}>
-              <span>
-                {typeof state.outputValues[index] == "object"
-                  ? JSON.stringify(state.outputValues[index])
-                  : state.outputValues[index]}
-              </span>
-              <span>: </span>
-              <span>{outputData.type}</span>
+              <p>
+                {" "}
+                <span>Click for copy response: </span>
+                <span>
+                  {" "}
+                  <CopyOutlined
+                    onClick={saveJson(state.outputValues[index])}
+                  />{" "}
+                </span>
+              </p>
+              <p>
+                {" "}
+                {typeof state.outputValues[index] == "object" ? (
+                  <div>
+
+                    <pre>{JSON.stringify(state.outputValues[index])}</pre>
+                  </div>
+                ) : (
+                  <span>{state.outputValues[index]}</span>
+                )}
+                <span>: </span>
+                <span>{outputData.type}</span>
+              </p>
             </p>
           );
         })}

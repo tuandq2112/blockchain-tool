@@ -1,3 +1,4 @@
+import { message } from "antd";
 import { ContractFactory, ethers } from "ethers";
 export const phraseToPrivateKey = (phrase) => {
   let wallet = ethers.Wallet.fromMnemonic(phrase);
@@ -118,3 +119,10 @@ export function convertOutput(outputs, values) {
     return result;
   }
 }
+export const copyToClipBoard = async (
+  text = "",
+  notificationText = "Copy successfully!"
+) => {
+  await navigator.clipboard.writeText(text);
+  message.success(notificationText);
+};

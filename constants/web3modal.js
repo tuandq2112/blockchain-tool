@@ -14,7 +14,6 @@ const customTestnet = bscTestnet;
 customTestnet.rpcUrls.default = {
   http: ["https://data-seed-prebsc-1-s1.binance.org:8545"],
 };
-console.log(customTestnet);
 const chains = [bsc, customTestnet];
 const { provider } = configureChains(chains, [
   walletConnectProvider({ projectId: PROJECT_ID }),

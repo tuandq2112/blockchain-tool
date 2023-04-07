@@ -1,4 +1,5 @@
-import { Avatar, Col, Form, Input, message, Row, Upload } from "antd";
+import { Button, Col, Form, Input, message, Row } from "antd";
+import CustomUpload from "components/custom/Upload";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { ProfileWrapper } from "styles/styled";
@@ -22,7 +23,7 @@ function Profile() {
 
   const customRequest = async (options) => {
     const { onSuccess, onError, file, onProgress } = options;
-
+    console.log(file);
     uploadSingleFile(file)
       .then((res) => {
         getSingleFile(res.filename).then((res2) => {
@@ -31,13 +32,16 @@ function Profile() {
       })
       .catch((err) => {});
   };
-  const fetchData = async()=>{
-    
-  }
+
+  const onFinish = () => {
+    form.validateFields().then((res) => {
+      console.log(res);
+    });
+  };
   return (
     <ProfileWrapper>
       <div className="content">
-        <Form form={form} layout="vertical">
+        <Form form={form} layout="vertical" onFinish={onFinish}>
           <Row gutter={[24, 24]}>
             <Col md={12} sm={24}>
               <Form.Item label={<strong>Username</strong>} name="username">
@@ -45,23 +49,8 @@ function Profile() {
               </Form.Item>
             </Col>
             <Col md={12} sm={24}>
-              {/* <Form.Item label="Profile image" name="profileImage"> */}
               <strong>Profile image</strong>
-              <br />{" "}
-              <Upload
-                name="avatar"
-                listType="picture-circle"
-                className="avatar-uploader"
-                showUploadList={false}
-                beforeUpload={beforeUpload}
-                customRequest={customRequest}
-              >
-                <Avatar
-                  src={imageUrl}
-                  style={{ width: 100, height: 100 }}
-                ></Avatar>
-              </Upload>
-              {/* </Form.Item> */}
+              <br /> <CustomUpload />
             </Col>
 
             <Col md={12} sm={24}>
@@ -92,6 +81,10 @@ function Profile() {
               <Form.Item label={<strong>Address</strong>} name="address">
                 <Input disabled={true} />
               </Form.Item>
+            </Col>
+
+            <Col md={12} sm={24}>
+              <Button type="submit">Save</Button>
             </Col>
           </Row>
         </Form>

@@ -10,6 +10,8 @@ function FunctionWrite({ renderData, index, smartContract }) {
     loading: false,
   });
 
+  const isPayableFunction = renderData.stateMutability == "payable";
+
   const onChange = (event) => {
     let name = event.target.name;
     let value = event.target.value;
@@ -20,11 +22,20 @@ function FunctionWrite({ renderData, index, smartContract }) {
 
   const handleQuery = async () => {
     setState({ loading: true });
+    console.log(state.inputValues)
+
     try {
       let functionKey = renderData.name;
       let inputKeys = renderData.inputs.map((item) => item.name);
       let inputs = inputKeys.map((item) => state.inputValues[item]);
-      let response = await smartContract[functionKey](...inputs);
+      console.log(isPayableFunction);
+      if (isPayableFunction) {
+        let values = { value: state.inputValues.value };
+
+        response = await smartContract[functionKey](...inputs, values);
+      } else {
+        response = await smartContract[functionKey](...inputs);
+      }
       let waitResponse = await response.wait();
       message.success(`Write function ${functionKey} successfully!`);
     } catch (error) {
@@ -50,11 +61,19 @@ function FunctionWrite({ renderData, index, smartContract }) {
             />
           );
         })}
+        {isPayableFunction && (
+          <InputWithName
+            inputData={{ name: "value", type: "uint256" }}
+            onChange={onChange}
+          />
+        )}
         <br />
         <Button
           onClick={handleQuery}
           loading={state.loading}
           disabled={state.loading}
+          danger={isPayableFunction}
+          
         >
           Query
         </Button>

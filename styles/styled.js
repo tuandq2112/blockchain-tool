@@ -30,6 +30,12 @@ export const GlobalStyled = createGlobalStyle`
       transform: none;
       color: white;
     }
+    &.ant-btn-dangerous{
+      color: white;
+      background: #b22b2b !important;
+      box-shadow: 0px 5px 0px #d7231a;
+
+    }
   }`;
 export const HomeWrapper = styled.div`
   padding: 5%;

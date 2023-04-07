@@ -36,10 +36,7 @@ export default function Home() {
       label: `Write contract`,
       children: (
         <ListWriteFunction
-          listFunction={state.abi.filter(
-            (item) =>
-              item.type == "function" && item.stateMutability == "nonpayable"
-          )}
+          listFunction={state.abi.filter((item) => item.type == "function")}
           smartContract={state.smartContract}
         />
       ),

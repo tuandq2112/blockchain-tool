@@ -1,12 +1,18 @@
 import { useWeb3Modal } from "@web3modal/react";
-import { Drawer, Dropdown, Tooltip } from "antd";
+import { Drawer, Dropdown, Tooltip, message } from "antd";
 import { AvatarLoginIcon, CardIcon, WalletIcon } from "assets/svg";
 import BaseModal from "components/base/BaseModal";
+import { LOGIN_INFORMATION } from "constants/key";
 import { AvatarDropdownConfig, MenuConfig } from "constants/menu";
+import { read } from "data/LocalStorageProvider";
+import { SIGN_MESSAGE } from "env/config";
 import useObjectState from "hooks/useObjectState";
+import moment from "moment";
 import { createRef } from "react";
+import { useDispatch } from "react-redux";
 import { useAccount, useDisconnect } from "wagmi";
 import { CustomMenu, HeaderWrapper } from "./styled";
+import request from "utils/request";
 
 export const verifyRef = createRef();
 function Header() {
@@ -18,6 +24,8 @@ function Header() {
   const { disconnect } = useDisconnect();
   const [state, setState] = useObjectState();
   const { cartOpen, walletOpen } = state;
+  const { login, updateData } = useDispatch().auth;
+
   /**
    * @function
    */
@@ -34,6 +42,32 @@ function Header() {
   };
   const closeWalletDrawer = () => {
     setState({ walletOpen: false });
+  };
+  const onLogin = async () => {
+    let loginInformation = await read(LOGIN_INFORMATION);
+    const isValidInformation =
+      loginInformation &&
+      moment() < moment(loginInformation.expirationDate, "DD/MM/YYYY HH:mm:ss");
+
+    if (isValidInformation) {
+      updateData({ loginInformation });
+      request.token = loginInformation.token;
+    } else {
+      const signer = await connector.getSigner();
+
+      const address = await signer.getAddress();
+      const signMessage = SIGN_MESSAGE + address;
+
+      signer
+        .signMessage(signMessage)
+        .then(async (signature) => {
+          const payload = { message: signMessage, address, signature };
+          await login(payload);
+        })
+        .catch((err) => {
+          message.error(err?.reason || err?.message);
+        });
+    }
   };
 
   return (
@@ -52,14 +86,14 @@ function Header() {
         >
           <Tooltip title="Account" placement="left">
             {isConnected ? (
-              <AvatarLoginIcon />
+              <AvatarLoginIcon onClick={open} />
             ) : (
               <AvatarLoginIcon onClick={open} />
             )}{" "}
           </Tooltip>
         </Dropdown>
 
-        <Tooltip title="Wallet" onClick={open}>
+        <Tooltip title="Wallet" onClick={onLogin}>
           <WalletIcon />
         </Tooltip>
 

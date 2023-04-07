@@ -10,7 +10,12 @@ if (!PROJECT_ID) {
   throw new Error("You need to provide NEXT_PUBLIC_PROJECT_ID env variable");
 }
 
-const chains = [bsc, bscTestnet];
+const customTestnet = bscTestnet;
+customTestnet.rpcUrls.default = {
+  http: ["https://data-seed-prebsc-1-s1.binance.org:8545"],
+};
+console.log(customTestnet);
+const chains = [bsc, customTestnet];
 const { provider } = configureChains(chains, [
   walletConnectProvider({ projectId: PROJECT_ID }),
 ]);

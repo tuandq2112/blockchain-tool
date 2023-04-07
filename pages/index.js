@@ -5,6 +5,7 @@ import ListWriteFunction from "components/ListWriteFunction";
 import { HighLightText } from "components/styled";
 import { ethers } from "ethers";
 import useObjectState from "hooks/useObjectState";
+import { isArray } from "lodash";
 import { createContext } from "react";
 import { HomeWrapper } from "styles/styled";
 import { getContractInstance } from "utils";
@@ -54,7 +55,13 @@ export default function Home() {
         reader.onload = (e) => {
           const contents = e.target.result;
           const parsedData = JSON.parse(contents);
-          setState({ draftAbi: parsedData });
+          setState({
+            draftAbi: isArray(parsedData)
+              ? parsedData
+              : isArray(parsedData.abi)
+              ? parsedData.abi
+              : [],
+          });
         };
         reader.readAsText(info.file.originFileObj);
         message.success(`${info.file.name} file uploaded successfully`);

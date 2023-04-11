@@ -24,6 +24,7 @@ function FunctionWrite({ renderData, index, smartContract }) {
     try {
       let functionKey = renderData.name;
       let inputs = state.inputValues.filter((item) => !!item);
+      console.log(inputs);
       if (isPayableFunction) {
         let values = { value: state.inputValues.value };
 
@@ -52,7 +53,7 @@ function FunctionWrite({ renderData, index, smartContract }) {
             <InputWithName
               key={inputKey}
               inputData={inputData}
-              onChange={onChange}
+              onChange={onChange(inputKey)}
             />
           );
         })}

@@ -7,20 +7,19 @@ import { isEmpty } from "lodash";
 import { convertOutput, copyToClipBoard } from "utils";
 function FunctionView({ renderData, index, smartContract }) {
   const [state, setState] = useObjectState({
-    inputValues: {},
+    inputValues: [],
     outputValues: [],
   });
 
   let isShowQuery = renderData.inputs.length > 0;
-  const onChange = (event) => {
-    let name = event.target.name;
+  const onChange = (inputKey) => (event) => {
     let value = event.target.value;
-    let newObject = Object.assign({}, state.inputValues);
-    newObject[name] = value;
-    setState({ inputValues: newObject });
+    let newInputs = Object.assign([], state.inputValues);
+    newInputs[inputKey] = value;
+    setState({ inputValues: newInputs });
   };
-  const handleOpenFunctionBlank = async (values) => {
-    if (!isEmpty(values)) {
+  const handleOpenFunctionBlank = async () => {
+    if (!isEmpty(renderData.inputs)) {
       try {
         if (isEmpty(renderData.inputs)) {
           let functionKey = renderData.name;
@@ -37,8 +36,7 @@ function FunctionView({ renderData, index, smartContract }) {
   const handleQuery = async () => {
     try {
       let functionKey = renderData.name;
-      let inputKeys = renderData.inputs.map((item) => item.name);
-      let inputs = inputKeys.map((item) => state.inputValues[item]);
+      let inputs = state.inputValues.filter((item) => !!item);
       let values = await smartContract[functionKey](...inputs);
 
       setState({ outputValues: convertOutput(renderData.outputs, values) });
@@ -64,7 +62,7 @@ function FunctionView({ renderData, index, smartContract }) {
             <InputWithName
               key={inputKey}
               inputData={inputData}
-              onChange={onChange}
+              onChange={onChange(inputKey)}
             />
           );
         })}
@@ -94,7 +92,6 @@ function FunctionView({ renderData, index, smartContract }) {
                 {" "}
                 {typeof state.outputValues[index] == "object" ? (
                   <div>
-
                     <pre>{JSON.stringify(state.outputValues[index])}</pre>
                   </div>
                 ) : (

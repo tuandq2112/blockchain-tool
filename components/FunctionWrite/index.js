@@ -6,29 +6,24 @@ import useObjectState from "hooks/useObjectState";
 
 function FunctionWrite({ renderData, index, smartContract }) {
   const [state, setState] = useObjectState({
-    inputValues: {},
+    inputValues: [],
     loading: false,
   });
 
   const isPayableFunction = renderData.stateMutability == "payable";
 
-  const onChange = (event) => {
-    let name = event.target.name;
+  const onChange = (inputKey) => (event) => {
     let value = event.target.value;
-    let newObject = Object.assign({}, state.inputValues);
-    newObject[name] = value;
-    setState({ inputValues: newObject });
+    let newInputs = Object.assign([], state.inputValues);
+    newInputs[inputKey] = value;
+    setState({ inputValues: newInputs });
   };
-
   const handleQuery = async () => {
     setState({ loading: true });
-    console.log(state.inputValues)
 
     try {
       let functionKey = renderData.name;
-      let inputKeys = renderData.inputs.map((item) => item.name);
-      let inputs = inputKeys.map((item) => state.inputValues[item]);
-      console.log(isPayableFunction);
+      let inputs = state.inputValues.filter((item) => !!item);
       if (isPayableFunction) {
         let values = { value: state.inputValues.value };
 
@@ -73,7 +68,6 @@ function FunctionWrite({ renderData, index, smartContract }) {
           loading={state.loading}
           disabled={state.loading}
           danger={isPayableFunction}
-          
         >
           Query
         </Button>

@@ -8,6 +8,7 @@ function FunctionWrite({ renderData, index, smartContract }) {
   const [state, setState] = useObjectState({
     inputValues: [],
     loading: false,
+    value: 0,
   });
 
   const isPayableFunction = renderData.stateMutability == "payable";
@@ -18,16 +19,18 @@ function FunctionWrite({ renderData, index, smartContract }) {
     newInputs[inputKey] = value;
     setState({ inputValues: newInputs });
   };
+
+  const setValue = (e) => {
+    setState({ value: e.target.value });
+  };
   const handleQuery = async () => {
     setState({ loading: true });
 
     try {
       let functionKey = renderData.name;
       let inputs = state.inputValues.filter((item) => !!item);
-      console.log(inputs);
       if (isPayableFunction) {
-        let values = { value: state.inputValues.value };
-
+        let values = { value: state.value };
         response = await smartContract[functionKey](...inputs, values);
       } else {
         response = await smartContract[functionKey](...inputs);
@@ -60,7 +63,7 @@ function FunctionWrite({ renderData, index, smartContract }) {
         {isPayableFunction && (
           <InputWithName
             inputData={{ name: "value", type: "uint256" }}
-            onChange={onChange}
+            onChange={setValue}
           />
         )}
         <br />

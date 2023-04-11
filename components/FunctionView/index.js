@@ -19,20 +19,19 @@ function FunctionView({ renderData, index, smartContract }) {
     setState({ inputValues: newInputs });
   };
   const handleOpenFunctionBlank = async () => {
-    if (!isEmpty(renderData.inputs)) {
-      try {
-        if (isEmpty(renderData.inputs)) {
-          let functionKey = renderData.name;
-          let values = await smartContract[functionKey]();
-          setState({
-            outputValues: convertOutput(renderData.outputs, values),
-          });
-        }
-      } catch (error) {
-        message.error(error.reason || error.message);
+    try {
+      if (isEmpty(renderData.inputs)) {
+        let functionKey = renderData.name;
+        let values = await smartContract[functionKey]();
+        setState({
+          outputValues: convertOutput(renderData.outputs, values),
+        });
       }
+    } catch (error) {
+      message.error(error.reason || error.message);
     }
   };
+
   const handleQuery = async () => {
     try {
       let functionKey = renderData.name;

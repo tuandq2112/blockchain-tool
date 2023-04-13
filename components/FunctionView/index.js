@@ -35,8 +35,17 @@ function FunctionView({ renderData, index, smartContract }) {
   const handleQuery = async () => {
     try {
       let functionKey = renderData.name;
-      let inputs = state.inputValues.filter((item) => !!item);
+      let inputs = state.inputValues
+        .filter((item) => !!item)
+        .map((item, index) => {
+          if (renderData.inputs[index].type.includes("[]")) {
+            return JSON.parse(item);
+          } else {
+            return item;
+          }
+        });
       let values = await smartContract[functionKey](...inputs);
+      console.log(values);
 
       setState({ outputValues: convertOutput(renderData.outputs, values) });
     } catch (error) {

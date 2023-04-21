@@ -25,7 +25,9 @@ export default function Home() {
       children: (
         <ListViewFunction
           listFunction={state.abi.filter(
-            (item) => item.type == "function" && item.stateMutability == "view"
+            (item) =>
+              item.type == "function" &&
+              !["nonpayable", "payable"].includes(item.stateMutability)
           )}
           smartContract={state.smartContract}
         />
@@ -37,7 +39,9 @@ export default function Home() {
       children: (
         <ListWriteFunction
           listFunction={state.abi.filter(
-            (item) => item.type == "function" && item.stateMutability != "view"
+            (item) =>
+              item.type == "function" &&
+              ["nonpayable", "payable"].includes(item.stateMutability)
           )}
           smartContract={state.smartContract}
         />

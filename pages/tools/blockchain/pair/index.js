@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 import useObjectState from "hooks/useObjectState";
 import moment from "moment";
 import { useEffect } from "react";
-import { useAccount } from "wagmi";
+import { erc20ABI, useAccount } from "wagmi";
 import * as XLSX from "xlsx";
 
 const listAccount = [
@@ -92,7 +92,8 @@ function Pair() {
     setState({ dataSource: listTx });
   };
 
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
+    setState({ loading: true });
     let preData = state.dataSource;
 
     if (state.filterTime) {
@@ -102,8 +103,68 @@ function Pair() {
           Number(item.timeStamp) <= state.filterTime[1].unix()
       );
     }
+    const jsonProvider = new ethers.providers.JsonRpcProvider(
+      "https://bsc-dataseed.binance.org"
+    );
+    const usdt = new ethers.Contract(
+      "0x55d398326f99059ff775485246999027b3197955",
+      erc20ABI,
+      jsonProvider
+    );
+    const ivi = new ethers.Contract(
+      "0x059ca11ba3099683Dc2e46f048063F5799a7f34c",
+      erc20ABI,
+      jsonProvider
+    );
+    let result = [];
+    for (let index = 0; index < listAccount.length; index++) {
+      const item = listAccount[index];
+      let usdtBalance1 = 0,
+        usdtBalance2 = 0,
+        usdtBalance3 = 0,
+        iviBalance1 = 0,
+        iviBalance2 = 0,
+        iviBalance3 = 0,
+        coinBalance1 = 0,
+        coinBalance2 = 0,
+        coinBalance3 = 0;
+      if (item.account1) {
+        usdtBalance1 = ethers.utils.formatEther(
+          await usdt.balanceOf(item.account1)
+        );
 
-    let result = listAccount.map((item) => {
+        iviBalance1 = ethers.utils.formatEther(
+          await ivi.balanceOf(item.account1)
+        );
+        coinBalance1 = ethers.utils.formatEther(
+          await jsonProvider.getBalance(item.account1)
+        );
+      }
+      if (item.account2) {
+        usdtBalance2 = ethers.utils.formatEther(
+          await usdt.balanceOf(item.account2)
+        );
+
+        iviBalance2 = ethers.utils.formatEther(
+          await ivi.balanceOf(item.account2)
+        );
+        coinBalance2 = ethers.utils.formatEther(
+          await jsonProvider.getBalance(item.account2)
+        );
+      }
+      if (item.account3) {
+        usdtBalance3 = ethers.utils.formatEther(
+          await usdt.balanceOf(item.account3)
+        );
+
+        iviBalance3 = ethers.utils.formatEther(
+          await ivi.balanceOf(item.account3)
+        );
+        coinBalance3 = ethers.utils.formatEther(
+          await jsonProvider.getBalance(item.account3)
+        );
+      }
+
       let data = [
         item.name,
         item.account1,
@@ -118,10 +179,20 @@ function Pair() {
         preData.filter(
           (subItem) => subItem.to?.toLowerCase() == item.account3?.toLowerCase()
         )?.length || 0,
+        usdtBalance1,
+        usdtBalance2,
+        usdtBalance3,
+        iviBalance1,
+        iviBalance2,
+        iviBalance3,
+        coinBalance1,
+        coinBalance2,
+        coinBalance3,
       ];
+      result.push(data);
+    }
 
-      return data;
-    });
+    console.log(result);
     result.unshift([
       "Tên",
       "Ví 1",
@@ -130,6 +201,15 @@ function Pair() {
       "Số lượt giao dịch ví 1",
       "Số lượt giao dịch ví 2",
       "Số lượt giao dịch ví 3",
+      "USDT ví 1",
+      "USDT ví 2",
+      "USDT ví 3",
+      "IVI ví 1",
+      "IVI ví 2",
+      "IVI ví 3",
+      "BNB ví 1",
+      "BNB ví 2",
+      "BNB ví 3",
     ]);
     const ws = XLSX.utils.aoa_to_sheet(result);
     const columnWidths = [
@@ -137,6 +217,16 @@ function Pair() {
       { wch: 50 },
       { wch: 50 },
       { wch: 50 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
       { wch: 20 },
       { wch: 20 },
       { wch: 20 },
@@ -148,6 +238,7 @@ function Pair() {
       wb,
       `Tổng hợp lượt giao dịch ${moment().format("dd-MM-YYYY HH:mm:ss")}.xlsx`
     );
+    setState({ loading: false });
   };
   const handleChangeRangeTime = (times) => {
     setState({ filterTime: times });
@@ -180,7 +271,9 @@ function Pair() {
           <DatePicker.RangePicker onChange={handleChangeRangeTime} />
         </Col>
         <Col span={4}>
-          <Button onClick={exportToExcel}>Export </Button>
+          <Button onClick={exportToExcel} loading={state.loading} disabled={!state.dataSource}>
+            Export{" "}
+          </Button>
         </Col>
         <Col span={8}>
           <p> Donate for me: 0x1A3fb2c99e25391E2f5Bd786399576C797E69cce</p>

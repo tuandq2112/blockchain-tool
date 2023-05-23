@@ -85,7 +85,6 @@ export function capitalizeFirstLetter(string) {
 }
 const convertOneRecord = (typeData, values) => {
   let type = typeData.type;
-  debugger;
   if (
     (type.startsWith("uint") || type.startsWith("int")) &&
     !type.includes("[]")
@@ -116,7 +115,7 @@ const convertOneRecord = (typeData, values) => {
     }
     return result;
   } else {
-    return values;
+    return values?.toString();
   }
 };
 export function convertOutput(outputs, values) {

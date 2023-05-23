@@ -48,6 +48,7 @@ const listAccount = [
   {
     name: "Nguyễn Hoàng Hiếu",
     account1: "0xA4f18e3C2307939a03584f29A01e850F4639c60f",
+    active: false,
   },
   {
     name: "Nguyễn Minh Duy",
@@ -56,6 +57,7 @@ const listAccount = [
   {
     name: "Vương Ngọc Mai",
     account1: "0xfF8529020Be0837eC5744bb4AC4B46f5b088fED8",
+    active: false,
   },
   {
     name: "Trần Minh Đức",
@@ -117,8 +119,9 @@ function Pair() {
       jsonProvider
     );
     let result = [];
-    for (let index = 0; index < listAccount.length; index++) {
-      const item = listAccount[index];
+    const activeAccount = listAccount.filter((item) => item.active !== false);
+    for (let index = 0; index < activeAccount.length; index++) {
+      const item = activeAccount[index];
       let usdtBalance1 = 0,
         usdtBalance2 = 0,
         usdtBalance3 = 0,
@@ -164,52 +167,47 @@ function Pair() {
           await jsonProvider.getBalance(item.account3)
         );
       }
+      const totalTransaction =
+        preData.filter(
+          (subItem) =>
+            subItem.to?.toLowerCase() == item.account1?.toLowerCase() ||
+            subItem.to?.toLowerCase() == item.account2?.toLowerCase() ||
+            subItem.to?.toLowerCase() == item.account3?.toLowerCase()
+        )?.length || 0;
 
+      const totalUSDT =
+        Number(usdtBalance1) + Number(usdtBalance2) + Number(usdtBalance3);
+      const totalIVI =
+        Number(iviBalance1) + Number(iviBalance2) + Number(iviBalance3);
+      const totalBNB =
+        Number(coinBalance1) + Number(coinBalance2) + Number(coinBalance3);
       let data = [
         item.name,
         item.account1,
         item.account2,
         item.account3,
-        preData.filter(
-          (subItem) => subItem.to?.toLowerCase() == item.account1?.toLowerCase()
-        )?.length || 0,
-        preData.filter(
-          (subItem) => subItem.to?.toLowerCase() == item.account2?.toLowerCase()
-        )?.length || 0,
-        preData.filter(
-          (subItem) => subItem.to?.toLowerCase() == item.account3?.toLowerCase()
-        )?.length || 0,
-        usdtBalance1,
-        usdtBalance2,
-        usdtBalance3,
-        iviBalance1,
-        iviBalance2,
-        iviBalance3,
-        coinBalance1,
-        coinBalance2,
-        coinBalance3,
+        totalTransaction,
+        totalUSDT,
+        totalIVI,
+        totalBNB,
+        totalIVI * 0.07,
+        totalIVI * 0.07 + totalUSDT,
       ];
       result.push(data);
     }
-
     console.log(result);
+    result.sort((a, b) => b[4] - a[4]);
     result.unshift([
       "Tên",
       "Ví 1",
       "Ví 2",
       "Ví 3",
-      "Số lượt giao dịch ví 1",
-      "Số lượt giao dịch ví 2",
-      "Số lượt giao dịch ví 3",
-      "USDT ví 1",
-      "USDT ví 2",
-      "USDT ví 3",
-      "IVI ví 1",
-      "IVI ví 2",
-      "IVI ví 3",
-      "BNB ví 1",
-      "BNB ví 2",
-      "BNB ví 3",
+      "Tổng lượt giao dịch của 3 ví",
+      "Tổng USDT của 3 ví",
+      "Tổng IVI của 3 ví",
+      "Tổng BNB của 3 ví",
+      "IVI-USDT",
+      "Total USDT",
     ]);
     const ws = XLSX.utils.aoa_to_sheet(result);
     const columnWidths = [
@@ -271,7 +269,11 @@ function Pair() {
           <DatePicker.RangePicker onChange={handleChangeRangeTime} />
         </Col>
         <Col span={4}>
-          <Button onClick={exportToExcel} loading={state.loading} disabled={!state.dataSource}>
+          <Button
+            onClick={exportToExcel}
+            loading={state.loading}
+            disabled={!state.dataSource}
+          >
             Export{" "}
           </Button>
         </Col>

@@ -304,25 +304,11 @@ function Pair() {
     }
 
     let diffDate =
-      moment.duration(rangeTime[1].diff(rangeTime[0])).asDays() || 1;
+      moment.duration(rangeTime[1].diff(rangeTime[0])).asDays() + 1;
     const result = [];
     for (let index = 0; index < diffDate; index++) {
-      const day = moment(rangeTime[0]).add(index, "days");
-      console.log(
-        preData
-          .filter(
-            (item) =>
-              Number(item.timeStamp) >= day.startOf("days").unix() &&
-              Number(item.timeStamp) <= day.endOf("days").unix()
-          )
-          // .map((item) => ({
-          //   from: item.from,
-          //   time: moment
-          //     .unix(Number(item.timeStamp))
-          //     .format("DD-MM-YYYY HH:mm:ss"),
-          //   value: item.value,
-          // }))
-      );
+      const day = rangeTime[0].add(index, "days");
+      console.log(day);
       const volume = preData
         .filter(
           (item) =>
@@ -332,9 +318,8 @@ function Pair() {
         ?.reduce((a, b) => a + Number(b.value) / 1e18, 0);
       result.push([day.format("DD-MM-YYYY"), volume]);
     }
-
-    result.unshift(["Date (DD-MM-YYYY)", "Volume (USDT)"]);
     console.log(result);
+    result.unshift(["Date (DD-MM-YYYY)", "Volume (USDT)"]);
     const ws = XLSX.utils.aoa_to_sheet(result);
     const columnWidths = [{ wch: 70 }, { wch: 50 }];
     ws["!cols"] = columnWidths;
@@ -370,7 +355,6 @@ function Pair() {
         message.error(JSON.stringify(err));
       });
   };
-  console.log(state);
   return (
     <div>
       <Row gutter={[24, 24]} justify="space-around">

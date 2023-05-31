@@ -245,7 +245,7 @@ function Pair() {
       ];
       result.push(data);
     }
-    result.sort((a, b) => b[4] - a[4]);
+    result.sort((a, b) => b[5] - a[5]);
     result.unshift([
       "Tên",
       "Ví 1",

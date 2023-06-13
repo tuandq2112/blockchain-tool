@@ -102,7 +102,7 @@ function Pair() {
 
   const fetchData = async () => {
     let subData = await axios.get(
-      `https://api.bscscan.com/api?module=account&action=tokentx&address=0x3f01d9f355de832c9f458867fd41e6ccb73742a7&startblock=0&endblock=999999999&sort=desc&apikey=FZ9TGE7XCY32G7YR7BDDBJ211CF7DMFF2G`
+      "https://api.bscscan.com/api?module=account&action=tokentx&contractaddress=0x059ca11ba3099683Dc2e46f048063F5799a7f34c&startblock=0&endblock=999999999&sort=desc&apikey=FZ9TGE7XCY32G7YR7BDDBJ211CF7DMFF2G"
     );
     let listTx = subData.data.result;
 
@@ -116,8 +116,8 @@ function Pair() {
     if (state.filterTime) {
       preData = state.dataSource.filter(
         (item) =>
-          Number(item.timeStamp) >= rangeTime[0].unix() &&
-          Number(item.timeStamp) <= rangeTime[1].unix()
+          Number(item.timeStamp) >= rangeTime[0].startOf("days").unix() &&
+          Number(item.timeStamp) <= rangeTime[1].endOf("days").unix()
       );
     }
     const jsonProvider = new ethers.providers.JsonRpcProvider(
@@ -162,7 +162,11 @@ function Pair() {
         preData.filter((transaction) =>
           accounts
             .map((account) => account.toLowerCase())
-            .some((account) => account == transaction.to?.toLowerCase())
+            .some(
+              (account) =>
+                account == transaction.to?.toLowerCase() ||
+                account == transaction.from?.toLowerCase()
+            )
         )?.length || 0;
 
       let accountData = Array(maxAccount)
@@ -299,7 +303,7 @@ function Pair() {
             Export transaction
           </Button>
         </Col>
-        <Col span={4}>
+        {/* <Col span={4}>
           <Button
             onClick={exportVolumeToExcel}
             loading={state.loading2}
@@ -307,7 +311,7 @@ function Pair() {
           >
             Export volume
           </Button>
-        </Col>
+        </Col> */}
         <Col span={8}>
           <p> Donate for me: 0x1A3fb2c99e25391E2f5Bd786399576C797E69cce</p>
           <br />

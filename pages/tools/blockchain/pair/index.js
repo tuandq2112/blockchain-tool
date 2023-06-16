@@ -3,7 +3,6 @@ import axios from "axios";
 import { ethers } from "ethers";
 import useObjectState from "hooks/useObjectState";
 import moment from "moment";
-import { useEffect } from "react";
 import { erc20ABI, useAccount } from "wagmi";
 import * as XLSX from "xlsx";
 
@@ -26,7 +25,7 @@ const listAccount = [
     name: "Nhữ Hương Quỳnh",
     accounts: [
       "0x05cd1325D1b5FDa893aDf3E7337880881B6feF3d",
-      "0x7FaB9f182Fa86Fa4fD5b0E43eB43390439c16D4F"
+      "0x7FaB9f182Fa86Fa4fD5b0E43eB43390439c16D4F",
     ],
   },
   {
@@ -99,25 +98,16 @@ function Pair() {
   const [state, setState] = useObjectState();
   const { connector, isConnected } = useAccount();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    let subData = await axios.get(
-      "https://api.bscscan.com/api?module=account&action=tokentx&contractaddress=0x059ca11ba3099683Dc2e46f048063F5799a7f34c&startblock=0&endblock=999999999&sort=desc&apikey=FZ9TGE7XCY32G7YR7BDDBJ211CF7DMFF2G"
-    );
-    let listTx = subData.data.result;
-
-    setState({ dataSource: listTx });
-  };
-
   const exportToExcel = async () => {
     setState({ loading: true });
-    let preData = state.dataSource;
+    let listTx = await axios.get(
+      "https://api.bscscan.com/api?module=account&action=tokentx&contractaddress=0x059ca11ba3099683Dc2e46f048063F5799a7f34c&startblock=0&endblock=999999999&sort=desc&apikey=FZ9TGE7XCY32G7YR7BDDBJ211CF7DMFF2G"
+    );
+    let preData = listTx.data.result;
+
     let rangeTime = state.filterTime;
     if (state.filterTime) {
-      preData = state.dataSource.filter(
+      preData = preData.filter(
         (item) =>
           Number(item.timeStamp) >= rangeTime[0].startOf("days").unix() &&
           Number(item.timeStamp) <= rangeTime[1].endOf("days").unix()
@@ -162,15 +152,27 @@ function Pair() {
       }
 
       const totalTransaction =
-        preData.filter((transaction) =>
-          accounts
-            .map((account) => account.toLowerCase())
-            .some(
-              (account) =>
-                account == transaction.to?.toLowerCase() ||
-                account == transaction.from?.toLowerCase()
-            )
-        )?.length || 0;
+        preData
+          .filter((transaction) =>
+            accounts
+              .map((account) => account.toLowerCase())
+              .some(
+                (account) =>
+                  account == transaction.to?.toLowerCase() ||
+                  account == transaction.from?.toLowerCase()
+              )
+          )
+          .reduce((uniqueTransactions, transaction) => {
+            const duplicateHash = uniqueTransactions.some(
+              (uniqueTransaction) => uniqueTransaction.hash === transaction.hash
+            );
+
+            if (!duplicateHash) {
+              uniqueTransactions.push(transaction);
+            }
+
+            return uniqueTransactions;
+          }, [])?.length || 0;
 
       let accountData = Array(maxAccount)
         .fill(null)
@@ -301,7 +303,7 @@ function Pair() {
           <Button
             onClick={exportToExcel}
             loading={state.loading}
-            disabled={!state.dataSource}
+            // disabled={!state.dataSource}
           >
             Export transaction
           </Button>

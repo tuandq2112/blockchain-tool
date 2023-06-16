@@ -164,8 +164,10 @@ function Pair() {
                 account == transaction.to?.toLowerCase() ||
                 account == transaction.from?.toLowerCase()
             );
+          const isSendToYourSelf =
+            transaction.from?.toLowerCase() === transaction.to?.toLowerCase();
 
-          if (!duplicateHash && accountIsAgent) {
+          if (!duplicateHash && accountIsAgent && isSendToYourSelf) {
             uniqueTransactions.push(transaction);
           }
 

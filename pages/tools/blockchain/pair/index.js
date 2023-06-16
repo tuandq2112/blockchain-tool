@@ -152,27 +152,25 @@ function Pair() {
       }
 
       const totalTransaction =
-        preData
-          .filter((transaction) =>
-            accounts
-              .map((account) => account.toLowerCase())
-              .some(
-                (account) =>
-                  account == transaction.to?.toLowerCase() ||
-                  account == transaction.from?.toLowerCase()
-              )
-          )
-          .reduce((uniqueTransactions, transaction) => {
-            const duplicateHash = uniqueTransactions.some(
-              (uniqueTransaction) => uniqueTransaction.hash === transaction.hash
+        preData?.reduce((uniqueTransactions, transaction) => {
+          const duplicateHash = uniqueTransactions.some(
+            (uniqueTransaction) => uniqueTransaction.hash === transaction.hash
+          );
+
+          const accountIsAgent = accounts
+            .map((account) => account.toLowerCase())
+            .some(
+              (account) =>
+                account == transaction.to?.toLowerCase() ||
+                account == transaction.from?.toLowerCase()
             );
 
-            if (!duplicateHash) {
-              uniqueTransactions.push(transaction);
-            }
+          if (!duplicateHash && accountIsAgent) {
+            uniqueTransactions.push(transaction);
+          }
 
-            return uniqueTransactions;
-          }, [])?.length || 0;
+          return uniqueTransactions;
+        }, [])?.length || 0;
 
       let accountData = Array(maxAccount)
         .fill(null)

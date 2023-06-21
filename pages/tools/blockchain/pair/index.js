@@ -1,7 +1,8 @@
-import { Button, Col, DatePicker, Input, message, Row } from "antd";
+import { Button, Col, DatePicker, message, Row } from "antd";
 import axios from "axios";
 import { ethers } from "ethers";
 import useObjectState from "hooks/useObjectState";
+import { isEmpty } from "lodash";
 import moment from "moment";
 import { erc20ABI, useAccount } from "wagmi";
 import * as XLSX from "xlsx";
@@ -226,46 +227,151 @@ function Pair() {
     setState({ loading: false });
   };
 
-  const exportVolumeToExcel = async () => {
+  const exportByTime = async () => {
     setState({ loading2: true });
-    let preData = state.dataSource;
-    let rangeTime = state.filterTime;
+    let listTx = await axios.get(
+      "https://api.bscscan.com/api?module=account&action=tokentx&contractaddress=0x059ca11ba3099683Dc2e46f048063F5799a7f34c&startblock=0&endblock=999999999&sort=desc&apikey=FZ9TGE7XCY32G7YR7BDDBJ211CF7DMFF2G"
+    );
+    let preData = listTx.data.result;
 
-    if (rangeTime) {
-      preData = state.dataSource.filter(
+    let rangeTime = state.filterTime;
+    if (state.filterTime) {
+      preData = preData.filter(
         (item) =>
           Number(item.timeStamp) >= rangeTime[0].startOf("days").unix() &&
-          Number(item.timeStamp) <= rangeTime[1].endOf("days") &&
-          item?.contractAddress?.toLowerCase() ===
-            "0x55d398326f99059ff775485246999027b3197955".toLowerCase()
+          Number(item.timeStamp) <= rangeTime[1].endOf("days").unix()
       );
     }
+    const jsonProvider = new ethers.providers.JsonRpcProvider(
+      "https://bsc-dataseed.binance.org"
+    );
+    const usdt = new ethers.Contract(
+      "0x55d398326f99059ff775485246999027b3197955",
+      erc20ABI,
+      jsonProvider
+    );
+    const ivi = new ethers.Contract(
+      "0x059ca11ba3099683Dc2e46f048063F5799a7f34c",
+      erc20ABI,
+      jsonProvider
+    );
+    let result = [];
 
-    let diffDate =
-      moment.duration(rangeTime[1].diff(rangeTime[0])).asDays() + 1;
-    const result = [];
-    for (let index = 0; index < diffDate; index++) {
-      const day = rangeTime[0].add(index, "days");
-      console.log(day);
-      const volume = preData
-        .filter(
-          (item) =>
-            Number(item.timeStamp) >= day.startOf("days").unix() &&
-            Number(item.timeStamp) <= day.endOf("days").unix()
-        )
-        ?.reduce((a, b) => a + Number(b.value) / 1e18, 0);
-      result.push([day.format("DD-MM-YYYY"), volume]);
+    let maxAccount = Math.max(
+      ...listAccount.map((item) => item.accounts.length)
+    );
+    const diffDate = rangeTime[1].diff(rangeTime[0], "days") + 1;
+    const dateArr = Array.from(Array(diffDate)).map((_, index) =>
+      rangeTime[0].add(index, "days")
+    );
+    for (let index = 0; index < listAccount.length; index++) {
+      const user = listAccount[index];
+      const accounts = user.accounts;
+      let totalUSDT = 0,
+        totalIVI = 0,
+        totalBNB = 0;
+      // for (let index = 0; index < accounts.length; index++) {
+      //   totalUSDT += Number(
+      //     ethers.utils.formatEther(await usdt.balanceOf(accounts[index]))
+      //   );
+      //   totalIVI += Number(
+      //     ethers.utils.formatEther(await ivi.balanceOf(accounts[index]))
+      //   );
+      //   totalBNB += Number(
+      //     ethers.utils.formatEther(
+      //       await jsonProvider.getBalance(accounts[index])
+      //     )
+      //   );
+      // }
+
+      const totalTransaction =
+        preData?.reduce((uniqueTransactions, transaction) => {
+          const duplicateHash = uniqueTransactions.some(
+            (uniqueTransaction) => uniqueTransaction.hash === transaction.hash
+          );
+
+          const accountIsAgent = accounts
+            .map((account) => account.toLowerCase())
+            .some(
+              (account) =>
+                account == transaction.to?.toLowerCase() ||
+                account == transaction.from?.toLowerCase()
+            );
+          const isSendToYourSelf =
+            transaction.from?.toLowerCase() === transaction.to?.toLowerCase();
+
+          if (!duplicateHash && accountIsAgent && !isSendToYourSelf) {
+            uniqueTransactions.push(transaction);
+          }
+
+          return uniqueTransactions;
+        }, []) || 0;
+
+      let accountData = Array(maxAccount)
+        .fill(null)
+        .map((_, index) => accounts[index]);
+      const listTransactionByTime = [];
+      for (let i = 0; i < dateArr.length; i++) {
+        const date = dateArr[i];
+
+        listTransactionByTime.push(
+          totalTransaction.filter(
+            (subItem) =>
+              Number(subItem.timeStamp) >= date.startOf("days").unix() &&
+              Number(subItem.timeStamp) <= date.endOf("days").unix()
+          )?.length
+        );
+      }
+
+      let data = [
+        user.name,
+        ...accountData,
+        totalTransaction.length,
+        totalUSDT,
+        totalIVI,
+        totalBNB,
+        totalIVI * 0.07,
+        totalIVI * 0.07 + totalUSDT,
+        ...listTransactionByTime,
+      ];
+      result.push(data);
     }
-    console.log(result);
-    result.unshift(["Date (DD-MM-YYYY)", "Volume (USDT)"]);
+    result.sort((a, b) => b[maxAccount + 1] - a[maxAccount + 1]);
+    const accountTitle = Array.from(Array(maxAccount)).map(
+      (_, index) => "Ví " + index + 1
+    );
+    result.unshift([
+      "Tên",
+      ...accountTitle,
+      `Tổng lượt giao dịch của ${maxAccount} ví`,
+      `Tổng USDT của ${maxAccount} ví`,
+      `Tổng IVI của ${maxAccount} ví`,
+      `Tổng BNB của ${maxAccount} ví`,
+      `IVI-USDT`,
+      `Total USDT`,
+      ...dateArr.map((item) => item.format("DD-MM-YYYY")),
+    ]);
     const ws = XLSX.utils.aoa_to_sheet(result);
-    const columnWidths = [{ wch: 70 }, { wch: 50 }];
+    const accountWidth = Array(maxAccount).fill({ wch: 50 });
+    const dateWidth = Array(diffDate).fill({ wch: 20 });
+
+    const columnWidths = [
+      { wch: 30 },
+      ...accountWidth,
+      { wch: 25 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      ...dateWidth,
+    ];
     ws["!cols"] = columnWidths;
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.utils.book_append_sheet(wb, ws, moment().format("dd-MM-YYYY"));
     XLSX.writeFile(
       wb,
-      `Tổng hợp volume ${moment().format("dd-MM-YYYY HH:mm:ss")}.xlsx`
+      `Tổng hợp lượt giao dịch ${moment().format("dd-MM-YYYY HH:mm:ss")}.xlsx`
     );
     setState({ loading2: false });
   };
@@ -295,7 +401,7 @@ function Pair() {
   };
   return (
     <div>
-      <Row gutter={[24, 24]} justify="space-around">
+      <Row gutter={[24, 24]} justify="start">
         <Col span={4}>
           <DatePicker.RangePicker onChange={handleChangeRangeTime} />
         </Col>
@@ -303,21 +409,21 @@ function Pair() {
           <Button
             onClick={exportToExcel}
             loading={state.loading}
-            // disabled={!state.dataSource}
+            disabled={isEmpty(state.filterTime)}
           >
             Export transaction
           </Button>
         </Col>
-        {/* <Col span={4}>
+        <Col span={4}>
           <Button
-            onClick={exportVolumeToExcel}
-            loading={state.loading2}
-            disabled={!state.dataSource || !state.filterTime}
+            onClick={exportByTime}
+            // loading={state.loading2}
+            // disabled={isEmpty(state.filterTime)}
           >
-            Export volume
+            Export transaction by date
           </Button>
-        </Col> */}
-        <Col span={8}>
+        </Col>
+        {/* <Col span={8}>
           <p> Donate for me: 0x1A3fb2c99e25391E2f5Bd786399576C797E69cce</p>
           <br />
           <Input placeholder="Input amount" onChange={handleChangeAmount} />
@@ -327,7 +433,7 @@ function Pair() {
           <Button disabled={!state.amount || !isConnected} onClick={submit}>
             Donate
           </Button>
-        </Col>
+        </Col> */}
       </Row>
     </div>
   );

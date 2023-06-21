@@ -417,13 +417,13 @@ function Pair() {
         <Col span={4}>
           <Button
             onClick={exportByTime}
-            // loading={state.loading2}
-            // disabled={isEmpty(state.filterTime)}
+            loading={state.loading2}
+            disabled={isEmpty(state.filterTime)}
           >
             Export transaction by date
           </Button>
         </Col>
-        {/* <Col span={8}>
+        <Col span={8}>
           <p> Donate for me: 0x1A3fb2c99e25391E2f5Bd786399576C797E69cce</p>
           <br />
           <Input placeholder="Input amount" onChange={handleChangeAmount} />
@@ -433,7 +433,7 @@ function Pair() {
           <Button disabled={!state.amount || !isConnected} onClick={submit}>
             Donate
           </Button>
-        </Col> */}
+        </Col>
       </Row>
     </div>
   );

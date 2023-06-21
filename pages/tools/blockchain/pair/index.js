@@ -270,19 +270,19 @@ function Pair() {
       let totalUSDT = 0,
         totalIVI = 0,
         totalBNB = 0;
-      // for (let index = 0; index < accounts.length; index++) {
-      //   totalUSDT += Number(
-      //     ethers.utils.formatEther(await usdt.balanceOf(accounts[index]))
-      //   );
-      //   totalIVI += Number(
-      //     ethers.utils.formatEther(await ivi.balanceOf(accounts[index]))
-      //   );
-      //   totalBNB += Number(
-      //     ethers.utils.formatEther(
-      //       await jsonProvider.getBalance(accounts[index])
-      //     )
-      //   );
-      // }
+      for (let index = 0; index < accounts.length; index++) {
+        totalUSDT += Number(
+          ethers.utils.formatEther(await usdt.balanceOf(accounts[index]))
+        );
+        totalIVI += Number(
+          ethers.utils.formatEther(await ivi.balanceOf(accounts[index]))
+        );
+        totalBNB += Number(
+          ethers.utils.formatEther(
+            await jsonProvider.getBalance(accounts[index])
+          )
+        );
+      }
 
       const totalTransaction =
         preData?.reduce((uniqueTransactions, transaction) => {

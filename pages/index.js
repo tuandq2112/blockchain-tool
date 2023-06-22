@@ -58,12 +58,14 @@ export default function Home() {
         reader.onload = (e) => {
           const contents = e.target.result;
           const parsedData = JSON.parse(contents);
+          const isValidABI = isArray(parsedData) || isArray(parsedData.abi);
           setState({
             draftAbi: isArray(parsedData)
               ? parsedData
               : isArray(parsedData.abi)
               ? parsedData.abi
               : [],
+            isValidABI,
           });
         };
         reader.readAsText(info.file.originFileObj);
@@ -98,6 +100,22 @@ export default function Home() {
     }
   };
 
+  const onChangeABI = (e) => {
+    try {
+      let data = e.target.value;
+      let parsedData = JSON.parse(data);
+      let isValidABI = isArray(parsedData);
+      setState({
+        draftAbi: isValidABI ? parsedData : [],
+        isValidABI: isValidABI,
+      });
+    } catch (error) {
+      setState({
+        isValidABI: false,
+      });
+    }
+  };
+  console.log(state);
   return (
     <HomeContext.Provider value={state.smartContract}>
       {" "}
@@ -107,7 +125,7 @@ export default function Home() {
           <HighLightText>ABI Interaction</HighLightText>
         </div>
         <Row gutter={[24, 24]}>
-          <Col span={24}>
+          <Col span={12}>
             <Dragger {...props}>
               <p className="ant-upload-drag-icon">
                 <InboxOutlined />
@@ -121,6 +139,14 @@ export default function Home() {
               </p>
             </Dragger>
           </Col>
+          <Col span={12}>
+            <Input.TextArea
+              rows={10}
+              onChange={onChangeABI}
+              placeholder="Copy ABI to this"
+            />
+          </Col>
+
           <Col span={24}>
             <Input
               placeholder="Input address of contract"
@@ -131,16 +157,21 @@ export default function Home() {
           <Col span={24}>
             <Button
               disabled={
-                !state.draftAbi || !state.smartContractAddress || !isConnected
+                !state.smartContractAddress || !isConnected || !state.isValidABI
               }
               onClick={setupSmartContract}
             >
               Init smart contract
             </Button>
+            <br /> 
+            <br />
+            <br />
+            {!state.isValidABI && <p style={{ color: "red" }}>INVALID ABI</p>}
           </Col>
           <Col span={24}>
             <Tabs items={items} />
           </Col>
+          <Col></Col>
         </Row>
       </HomeWrapper>
     </HomeContext.Provider>

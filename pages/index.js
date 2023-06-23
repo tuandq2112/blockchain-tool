@@ -1,12 +1,22 @@
 import { InboxOutlined } from "@ant-design/icons";
-import { Button, Col, Input, message, Row, Tabs, Upload } from "antd";
+import {
+  Button,
+  Col,
+  Input,
+  message,
+  Row,
+  Select,
+  Space,
+  Tabs,
+  Upload,
+} from "antd";
 import ListViewFunction from "components/ListViewFunction";
 import ListWriteFunction from "components/ListWriteFunction";
 import { HighLightText } from "components/styled";
 import { ethers } from "ethers";
 import useObjectState from "hooks/useObjectState";
 import { isArray } from "lodash";
-import { createContext } from "react";
+import { createContext, useEffect } from "react";
 import { HomeWrapper } from "styles/styled";
 import { getContractInstance } from "utils";
 import { useAccount } from "wagmi";
@@ -17,7 +27,9 @@ export const HomeContext = createContext();
 export default function Home() {
   const [state, setState] = useObjectState({ abi: [] });
   const { connector, isConnected } = useAccount();
-
+  useEffect(() => {
+    readContract();
+  }, []);
   const items = [
     {
       key: "1",
@@ -59,13 +71,16 @@ export default function Home() {
           const contents = e.target.result;
           const parsedData = JSON.parse(contents);
           const isValidABI = isArray(parsedData) || isArray(parsedData.abi);
+          const abi = isArray(parsedData)
+            ? parsedData
+            : isArray(parsedData.abi)
+            ? parsedData.abi
+            : [];
           setState({
-            draftAbi: isArray(parsedData)
-              ? parsedData
-              : isArray(parsedData.abi)
-              ? parsedData.abi
-              : [],
+            draftAbi: abi,
             isValidABI,
+            fileName: info.file.name,
+            draftAbiStr: JSON.stringify(abi),
           });
         };
         reader.readAsText(info.file.originFileObj);
@@ -108,6 +123,7 @@ export default function Home() {
       setState({
         draftAbi: isValidABI ? parsedData : [],
         isValidABI: isValidABI,
+        draftAbiStr: JSON.stringify(isValidABI ? parsedData : []),
       });
     } catch (error) {
       setState({
@@ -115,7 +131,33 @@ export default function Home() {
       });
     }
   };
-  console.log(state);
+  const saveContract = () => {
+    const body = {
+      abi: state.draftAbi,
+      address: state.smartContractAddress,
+      fileName: state.fileName,
+    };
+    const contracts = localStorage.getItem("contracts");
+    const parseContract = contracts ? JSON.parse(contracts) : [];
+    parseContract.push(body);
+    localStorage.setItem("contracts", JSON.stringify(parseContract));
+    setState({ contracts: parseContract });
+  };
+  const readContract = () => {
+    const contracts = localStorage.getItem("contracts");
+    setState({ contracts: JSON.parse(contracts) });
+  };
+
+  const onChange = (value, data) => {
+    setState({
+      draftAbi: data.abi,
+      smartContractAddress: data.address,
+      draftAbiStr: JSON.stringify(data.abi),
+      isValidABI: true,
+      fileName: data.fileName,
+    });
+  };
+
   return (
     <HomeContext.Provider value={state.smartContract}>
       {" "}
@@ -125,6 +167,18 @@ export default function Home() {
           <HighLightText>ABI Interaction</HighLightText>
         </div>
         <Row gutter={[24, 24]}>
+          <Col span={24}>
+            <Select
+              className="w-200"
+              placeholder="Choose saved contract"
+              options={state.contracts?.map((item) => ({
+                label: item.fileName,
+                value: item.fileName,
+                ...item,
+              }))}
+              onChange={onChange}
+            />
+          </Col>
           <Col span={12}>
             <Dragger {...props}>
               <p className="ant-upload-drag-icon">
@@ -144,6 +198,7 @@ export default function Home() {
               rows={10}
               onChange={onChangeABI}
               placeholder="Copy ABI to this"
+              value={state.draftAbiStr}
             />
           </Col>
 
@@ -155,18 +210,30 @@ export default function Home() {
             />
           </Col>
           <Col span={24}>
-            <Button
-              disabled={
-                !state.smartContractAddress || !isConnected || !state.isValidABI
-              }
-              onClick={setupSmartContract}
-            >
-              Init smart contract
-            </Button>
-            <br /> 
+            <Space>
+              <Button
+                disabled={
+                  !state.smartContractAddress ||
+                  !isConnected ||
+                  !state.isValidABI
+                }
+                onClick={setupSmartContract}
+              >
+                Init smart contract
+              </Button>
+
+              <Button
+                disabled={!state.smartContractAddress || !state.isValidABI}
+                onClick={saveContract}
+              >
+                Save
+              </Button>
+            </Space>
+
             <br />
             <br />
-            {!state.isValidABI && <p style={{ color: "red" }}>INVALID ABI</p>}
+            <br />
+            {/* {!state.isValidABI && <p style={{ color: "red" }}>INVALID ABI</p>} */}
           </Col>
           <Col span={24}>
             <Tabs items={items} />

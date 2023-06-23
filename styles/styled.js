@@ -10,6 +10,10 @@ const baseWrapperCss = css`
 `;
 
 export const GlobalStyled = createGlobalStyle`
+ .w-200 {
+    width: 200px;
+  }
+  
  .ant-btn {
     color: white;
     background: #0077b6 !important;

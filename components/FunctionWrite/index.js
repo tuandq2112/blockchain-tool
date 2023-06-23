@@ -25,7 +25,7 @@ function FunctionWrite({ renderData, index, smartContract }) {
   };
   const handleQuery = async () => {
     setState({ loading: true });
-
+    let response;
     try {
       let functionKey = renderData.name;
       let inputs = state.inputValues.filter((item) => !!item);

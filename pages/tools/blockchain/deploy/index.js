@@ -156,11 +156,17 @@ function Deploy() {
   };
 
   const columns = [
-    { title: "Address", dataIndex: "address", key: "address" },
-    { title: "Owner", dataIndex: "owner", key: "owner" },
-    { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Symbol", dataIndex: "symbol", key: "symbol" },
-    { title: "Balance Of", dataIndex: "balanceOf", key: "balanceOf" },
+    { title: "Index", dataIndex: "index", key: "index", width: 70 },
+    { title: "Address", dataIndex: "address", key: "address", width: 250 },
+    { title: "Owner", dataIndex: "owner", key: "owner", width: 250 },
+    { title: "Name", dataIndex: "name", key: "name", width: 100 },
+    { title: "Symbol", dataIndex: "symbol", key: "symbol", width: 100 },
+    {
+      title: "Balance",
+      dataIndex: "balanceOf",
+      key: "balanceOf",
+      width: 150,
+    },
     {
       title: "Action",
       dataIndex: "contract",
@@ -252,9 +258,14 @@ function Deploy() {
         <Col span={24}>
           <h1>Token manage</h1>{" "}
           <Table
-            dataSource={state?.contracts}
-            rowKey="address"
+            dataSource={state?.contracts?.map((item, index) => ({
+              ...item,
+              index: index + 1,
+            }))}
+            rowKey="index"
             columns={columns}
+            scroll={{ y: 500, x: 800 }}
+            tableLayout="fixed"
           />
         </Col>
       </Row>

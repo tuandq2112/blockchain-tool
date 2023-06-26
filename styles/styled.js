@@ -76,7 +76,7 @@ export const BeautyWalletWrapper = styled.div`
   ${baseWrapperCss}
 `;
 export const DeployWrapper = styled.div`
-  ${baseWrapperCss}
+  padding: 20px;
 `;
 export const NotFoundPageWrapper = styled.div`
   display: flex;

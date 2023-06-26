@@ -13,6 +13,12 @@ export const GlobalStyled = createGlobalStyle`
  .w-200 {
     width: 200px;
   }
+
+ .space-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+ }
   
  .ant-btn {
     color: white;

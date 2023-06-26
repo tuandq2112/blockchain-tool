@@ -1,14 +1,14 @@
-import { InboxOutlined } from "@ant-design/icons";
+import { DeleteOutlined, InboxOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
   Input,
-  message,
   Row,
   Select,
   Space,
   Tabs,
   Upload,
+  message,
 } from "antd";
 import ListViewFunction from "components/ListViewFunction";
 import ListWriteFunction from "components/ListWriteFunction";
@@ -20,7 +20,6 @@ import { createContext, useEffect } from "react";
 import { HomeWrapper } from "styles/styled";
 import { getContractInstance } from "utils";
 import { useAccount } from "wagmi";
-
 const { Dragger } = Upload;
 export const HomeContext = createContext();
 
@@ -143,6 +142,15 @@ export default function Home() {
     localStorage.setItem("contracts", JSON.stringify(parseContract));
     setState({ contracts: parseContract });
   };
+
+  const onRemove = (event) => (index) => {
+    event.stopPropagation();
+    const contracts = localStorage.getItem("contracts");
+    const parseContract = contracts ? JSON.parse(contracts) : [];
+    parseContract.splice(index, 1);
+    localStorage.setItem("contracts", JSON.stringify(parseContract));
+    setState({ contracts: parseContract });
+  };
   const readContract = () => {
     const contracts = localStorage.getItem("contracts");
     setState({ contracts: JSON.parse(contracts) });
@@ -169,10 +177,17 @@ export default function Home() {
         <Row gutter={[24, 24]}>
           <Col span={24}>
             <Select
-              className="w-200"
+              className="w-200 "
               placeholder="Choose saved contract"
-              options={state.contracts?.map((item) => ({
-                label: item.fileName,
+              options={state.contracts?.map((item, index) => ({
+                label: (
+                  <p key={index} className="space-between">
+                    <span>{item.fileName}</span>
+                    <span>
+                      <DeleteOutlined onClick={onRemove(index)} />
+                    </span>
+                  </p>
+                ),
                 value: item.fileName,
                 ...item,
               }))}

@@ -114,6 +114,11 @@ export default function Home() {
     }
   };
 
+  const handleChangeFileName = (e) => {
+    let fileName = e.target.value;
+    setState({ fileName });
+  };
+
   const onChangeABI = (e) => {
     try {
       let data = e.target.value;
@@ -144,7 +149,6 @@ export default function Home() {
   };
 
   const onRemove = (event) => (index) => {
-    event.stopPropagation();
     const contracts = localStorage.getItem("contracts");
     const parseContract = contracts ? JSON.parse(contracts) : [];
     parseContract.splice(index, 1);
@@ -222,6 +226,14 @@ export default function Home() {
               placeholder="Input address of contract"
               onChange={handleChangeSmartContractAddress}
               value={state.smartContractAddress}
+            />
+          </Col>
+
+          <Col span={24}>
+            <Input
+              placeholder="Input name"
+              onChange={handleChangeFileName}
+              value={state.fileName}
             />
           </Col>
           <Col span={24}>

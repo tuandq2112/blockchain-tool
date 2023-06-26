@@ -46,6 +46,7 @@ export const GlobalStyled = createGlobalStyle`
       box-shadow: 0px 5px 0px #d7231a;
 
     }
+    
   }`;
 export const HomeWrapper = styled.div`
   padding: 5%;

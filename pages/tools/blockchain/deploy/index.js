@@ -1,4 +1,5 @@
-import { Button, Col, Form, Input, message, Row, Table } from "antd";
+import { Button, Col, Form, Input, message, Row, Space, Table } from "antd";
+import { DeleteIcon, HoeIcon } from "assets/svg";
 import Erc20Builder from "builder/Erc20Builder";
 import BaseModal from "components/base/BaseModal";
 import { read, save } from "data/LocalStorageProvider";
@@ -19,6 +20,23 @@ function Deploy() {
   const { connector, isConnected } = useAccount();
   const [state, setState] = useObjectState();
   const mintRef = useRef();
+
+  useEffect(() => {
+    if (state.chainId) {
+      getData();
+    }
+  }, [state.chainId]);
+
+  useEffect(() => {
+    if (connector) {
+      if (!isEmpty(state.tokens)) {
+        getContracts();
+      } else {
+        setState({ contracts: [] });
+      }
+      getChainId();
+    }
+  }, [state.tokens, connector]);
   //Functions
   const deployNewERC20 = async () => {
     let signer = await connector.getSigner();
@@ -50,14 +68,20 @@ function Deploy() {
   const getContracts = async () => {
     let tokens = state.tokens;
     let signer = await connector.getSigner();
+    let currentAccount = await signer.getAddress();
     let contracts = await Promise.all(
       tokens.map(async (item) => {
-        let contract = new ethers.Contract(item, Erc20Builder.abi, signer);
-        let balanceOf = await contract.balanceOf(await signer.getAddress());
+        let contract = getContractInstance(item, Erc20Builder.abi, signer);
+        let balanceOf = await contract.balanceOf(currentAccount);
         let name = await contract.name();
         let symbol = await contract.symbol();
-        let owner = await contract.owner();
         let address = item;
+        let owner;
+        try {
+          owner = await contract.owner();
+        } catch (error) {
+          owner = "Not have owner";
+        }
 
         return {
           address,
@@ -71,7 +95,32 @@ function Deploy() {
     );
     setState({ contracts });
   };
+  const importToken = async () => {
+    const contract = state.address;
 
+    if (ethers.utils.isAddress(contract)) {
+      let newToken = Object.assign([], state.tokens);
+      newToken.push(contract);
+      saveData(newToken);
+      setState({ tokens: newToken });
+      message.success("Import token successfully!");
+    } else {
+      message.error("Invalid address");
+    }
+  };
+  const removeToken = (index) => async () => {
+    try {
+      let newToken = Object.assign([], state.tokens);
+      newToken.splice(index, 1);
+      debugger;
+
+      saveData(newToken);
+      setState({ tokens: newToken });
+      message.success("Delete successfully!");
+    } catch (error) {
+      message.success("Delete fail!");
+    }
+  };
   const getChainId = async () => {
     setState({ chainId: await connector.getChainId() });
   };
@@ -108,7 +157,7 @@ function Deploy() {
 
   const columns = [
     { title: "Address", dataIndex: "address", key: "address" },
-    // { title: "Owner", dataIndex: "owner", key: "owner" },
+    { title: "Owner", dataIndex: "owner", key: "owner" },
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Symbol", dataIndex: "symbol", key: "symbol" },
     { title: "Balance Of", dataIndex: "balanceOf", key: "balanceOf" },
@@ -116,8 +165,18 @@ function Deploy() {
       title: "Action",
       dataIndex: "contract",
       key: "contract",
-      render: (_, record) => {
-        return <Button onClick={showModal(record)}>Action</Button>;
+      align: "center",
+      render: (_, record, index) => {
+        return (
+          <Space>
+            <Button onClick={showModal(record)}>
+              <HoeIcon />
+            </Button>
+            <Button onClick={removeToken(index)}>
+              <DeleteIcon />
+            </Button>
+          </Space>
+        );
       },
     },
   ];
@@ -144,44 +203,54 @@ function Deploy() {
     );
   };
 
-  useEffect(() => {
-    if (state.chainId) {
-      getData();
-    }
-  }, [state.chainId]);
-
-  useEffect(() => {
-    if (connector) {
-      if (!isEmpty(state.tokens)) {
-        getContracts();
-      }
-      getChainId();
-    }
-  }, [state.tokens, connector]);
-
   return (
     <DeployWrapper>
       <Row gutter={[24, 24]}>
         <Col lg={12} xs={24}>
-          <h1>Deploy new token ERC20</h1>{" "}
-          <Input
-            placeholder="Name"
-            onChange={handleChangeInput}
-            name="name"
-            value={state.name}
-          ></Input>
-          <Input
-            placeholder="Symbol"
-            onChange={handleChangeInput}
-            name="symbol"
-            value={state.symbol}
-          ></Input>
-          <Button onClick={deployNewERC20} disabled={!isConnected}>
-            Deploy erc20 contract
-          </Button>
+          <h1>Deploy new token</h1>{" "}
+          <Space>
+            <Input
+              placeholder="Input name"
+              onChange={handleChangeInput}
+              name="name"
+              value={state.name}
+            ></Input>
+            <Input
+              placeholder="Input symbol"
+              onChange={handleChangeInput}
+              name="symbol"
+              value={state.symbol}
+            ></Input>
+            <Button
+              onClick={deployNewERC20}
+              disabled={!isConnected || !state.name || !state.symbol}
+            >
+              Deploy
+            </Button>
+          </Space>
         </Col>
+
+        <Col lg={12} xs={24}>
+          <h1>Import token</h1>{" "}
+          <Space>
+            <Input
+              placeholder="Input address"
+              onChange={handleChangeInput}
+              name="address"
+              value={state.address}
+            ></Input>
+
+            <Button
+              onClick={importToken}
+              disabled={!isConnected || !state.address}
+            >
+              Import
+            </Button>
+          </Space>
+        </Col>
+
         <Col span={24}>
-          <h1>Tokens</h1>{" "}
+          <h1>Token manage</h1>{" "}
           <Table
             dataSource={state?.contracts}
             rowKey="address"

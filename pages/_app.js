@@ -3,7 +3,8 @@ import CustomLayout from "Layout";
 import DefaultHead from "Layout/DefaultHead";
 import { ConfigProvider, message } from "antd";
 import { nonWeb3ModalPaths } from "constants/global";
-import { wagmiClient, web3ModalConfig } from "constants/web3modal";
+import { ethereumClient, wagmiConfig } from "constants/web3modal";
+import { PROJECT_ID } from "env/config";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Provider } from "react-redux";
@@ -28,14 +29,14 @@ function App({ Component, pageProps }) {
         <GlobalStyled />
         <DefaultHead />
         {ready && (
-          <WagmiConfig client={wagmiClient}>
+          <WagmiConfig config={wagmiConfig}>
             <CustomLayout {...pageProps}>
               <Component />
             </CustomLayout>
           </WagmiConfig>
         )}
         {!nonWeb3ModalPaths.includes(pathname) && (
-          <Web3Modal {...web3ModalConfig} />
+          <Web3Modal projectId={PROJECT_ID} ethereumClient={ethereumClient} />
         )}
       </Provider>
     </ConfigProvider>

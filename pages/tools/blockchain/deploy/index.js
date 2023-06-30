@@ -1,3 +1,4 @@
+import { getContract } from "@wagmi/core";
 import { Button, Col, Form, Input, message, Row, Space, Table } from "antd";
 import { DeleteIcon, HoeIcon } from "assets/svg";
 import Erc20Builder from "builder/Erc20Builder";
@@ -8,48 +9,42 @@ import useObjectState from "hooks/useObjectState";
 import { isEmpty } from "lodash";
 import { useEffect, useRef } from "react";
 import { DeployWrapper } from "styles/styled";
-import {
-  deployContract,
-  getContractInstance,
-  parseEther,
-  toDecimal,
-} from "utils";
-import { useAccount } from "wagmi";
+import { getContractInstance, parseEther, toDecimal } from "utils";
+import { useAccount, useNetwork, useWalletClient } from "wagmi";
 function Deploy() {
   //Hooks
-  const { connector, isConnected } = useAccount();
+  const { connector, isConnected, address } = useAccount();
+  const { data: walletClient } = useWalletClient();
+
   const [state, setState] = useObjectState();
   const mintRef = useRef();
+  const { chain, chains } = useNetwork();
 
   useEffect(() => {
-    if (state.chainId) {
+    if (chain) {
       getData();
     }
-  }, [state.chainId]);
+  }, [chain]);
 
   useEffect(() => {
-    if (connector) {
+    if (isConnected && address) {
       if (!isEmpty(state.tokens)) {
         getContracts();
       } else {
         setState({ contracts: [] });
       }
-      getChainId();
     }
-  }, [state.tokens, connector]);
+  }, [state.tokens, isConnected, address]);
   //Functions
   const deployNewERC20 = async () => {
-    let signer = await connector.getSigner();
-    deployContract([state.name, state.symbol], Erc20Builder, signer)
-      .then((res) => {
-        let newToken = Object.assign([], state.tokens);
-        newToken.push(res.address);
-        saveData(newToken);
-        setState({ tokens: newToken });
-        message.success("Create successfully!");
+    walletClient
+      .deployContract({
+        abi: Erc20Builder.abi,
+        bytecode: Erc20Builder.bytecode,
+        args: [state.name, state.symbol],
       })
-      .catch((err) => {
-        message.error("Create fail!");
+      .then((res) => {
+        console.log(res);
       });
   };
   const handleChangeInput = (event) => {
@@ -61,30 +56,33 @@ function Deploy() {
   };
 
   const getData = () => {
-    let tokens = read(state.chainId);
+    let tokens = read(chain.id);
     setState({ tokens });
   };
 
   const getContracts = async () => {
+    setState({ loading: true });
     let tokens = state.tokens;
-    let signer = await connector.getSigner();
-    let currentAccount = await signer.getAddress();
     let contracts = await Promise.all(
       tokens.map(async (item) => {
-        let contract = getContractInstance(item, Erc20Builder.abi, signer);
-        let balanceOf = await contract.balanceOf(currentAccount);
-        let name = await contract.name();
-        let symbol = await contract.symbol();
-        let address = item;
+        let contract = getContract({
+          address: item,
+          abi: Erc20Builder.abi,
+          walletClient,
+        });
+        let balanceOf = await contract.read.balanceOf([address]);
+        let name = await contract.read.name();
+        let symbol = await contract.read.symbol();
+        let smcAddress = item;
         let owner;
         try {
-          owner = await contract.owner();
+          owner = await contract.read.owner();
         } catch (error) {
           owner = "Not have owner";
         }
 
         return {
-          address,
+          address: smcAddress,
           name,
           symbol,
           balanceOf: toDecimal(balanceOf),
@@ -93,7 +91,7 @@ function Deploy() {
         };
       })
     );
-    setState({ contracts });
+    setState({ contracts, loading: false });
   };
   const importToken = async () => {
     const contract = state.address;
@@ -266,6 +264,7 @@ function Deploy() {
             columns={columns}
             scroll={{ y: 500, x: 800 }}
             tableLayout="fixed"
+            loading={state.loading}
           />
         </Col>
       </Row>

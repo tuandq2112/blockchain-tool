@@ -22,7 +22,7 @@ function FunctionView({ renderData, index, smartContract }) {
     try {
       if (isEmpty(renderData.inputs)) {
         let functionKey = renderData.name;
-        let values = await smartContract[functionKey]();
+        let values = await smartContract.read[functionKey]();
         setState({
           outputValues: convertOutput(renderData.outputs, values),
         });
@@ -44,7 +44,7 @@ function FunctionView({ renderData, index, smartContract }) {
             return item;
           }
         });
-      let values = await smartContract[functionKey](...inputs);
+      let values = await smartContract.read[functionKey](inputs);
       console.log(values);
 
       setState({ outputValues: convertOutput(renderData.outputs, values) });

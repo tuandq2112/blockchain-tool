@@ -1,4 +1,5 @@
 import { DeleteOutlined, InboxOutlined } from "@ant-design/icons";
+import { getContract } from "@wagmi/core";
 import {
   Button,
   Col,
@@ -18,14 +19,15 @@ import useObjectState from "hooks/useObjectState";
 import { isArray } from "lodash";
 import { createContext, useEffect } from "react";
 import { HomeWrapper } from "styles/styled";
-import { getContractInstance } from "utils";
-import { useAccount } from "wagmi";
+import { useAccount, useWalletClient } from "wagmi";
 const { Dragger } = Upload;
 export const HomeContext = createContext();
 
 export default function Home() {
   const [state, setState] = useObjectState({ abi: [] });
   const { connector, isConnected } = useAccount();
+  const { data: walletClient, isError, isLoading } = useWalletClient();
+
   useEffect(() => {
     readContract();
   }, []);
@@ -98,11 +100,11 @@ export default function Home() {
     accept: "application/json",
   };
   const setupSmartContract = async () => {
-    let smartContract = getContractInstance(
-      state.smartContractAddress,
-      state.draftAbi,
-      await connector.getSigner()
-    );
+    let smartContract = getContract({
+      address: state.smartContractAddress,
+      abi: state.draftAbi,
+      walletClient,
+    });
     setState({ smartContract, abi: state.draftAbi });
     message.success("Setup successful!");
   };
@@ -192,7 +194,7 @@ export default function Home() {
                     </span>
                   </p>
                 ),
-                value: item.fileName,
+                value:index,
                 ...item,
               }))}
               onChange={onChange}

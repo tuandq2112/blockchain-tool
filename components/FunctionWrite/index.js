@@ -31,9 +31,9 @@ function FunctionWrite({ renderData, index, smartContract }) {
       let inputs = state.inputValues.filter((item) => !!item);
       if (isPayableFunction) {
         let values = { value: state.value };
-        response = await smartContract[functionKey](...inputs, values);
+        response = await smartContract.write[functionKey](inputs, values);
       } else {
-        response = await smartContract[functionKey](...inputs);
+        response = await smartContract.write[functionKey](inputs);
       }
       let waitResponse = await response.wait();
       message.success(`Write function ${functionKey} successfully!`);

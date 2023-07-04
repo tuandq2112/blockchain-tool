@@ -66,10 +66,7 @@ const listAccount = [
   },
   {
     name: "Trần Minh Đức",
-    accounts: [
-      "0xf9dA4a329eb6E1852eC2BC8a2AFE6d818C151356",
-      "0xd9866589145067D11275e0949F0aE60F867b68C0",
-    ],
+    accounts: ["0xf9dA4a329eb6E1852eC2BC8a2AFE6d818C151356"],
   },
   {
     name: "Hoàng Minh Sơn",
@@ -87,11 +84,11 @@ const listAccount = [
   },
   {
     name: "Nguyễn Minh Duy",
-    accounts: ["0x69e37c6bae7ad952ad686c62afe3fa82642e98d8"],
+    accounts: ["0xf9dA4a329eb6E1852eC2BC8a2AFE6d818C151356"],
   },
   {
     name: "Nguyễn Hương Giang",
-    accounts: ["0xbd15f97d58f8433a19686910fd9d6e966712ab6f"],
+    accounts: ["0x69e37c6bae7ad952ad686c62afe3fa82642e98d8"],
   },
 ];
 

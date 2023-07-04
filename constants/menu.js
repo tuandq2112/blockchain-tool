@@ -25,7 +25,7 @@ const MenuConfig = [
           {
             label: (
               <Link href={"/tools/blockchain/private"}>
-                Convert private key
+                Phrase to private key
               </Link>
             ),
             key: "tool-blockchain-1",
@@ -33,17 +33,17 @@ const MenuConfig = [
           {
             label: (
               <Link href={"/tools/blockchain/beauty-wallet"}>
-                Create beauty wallet
+                Generate beauty wallet
               </Link>
             ),
             key: "tool-blockchain-2",
           },
           {
-            label: <Link href={"/tools/blockchain/deploy"}>Deploy ERC20</Link>,
+            label: <Link href={"/tools/blockchain/deploy"}>Deploy</Link>,
             key: "tool-blockchain-3",
           },
           {
-            label: <Link href={"/tools/blockchain/pair"}>Query From Pair</Link>,
+            label: <Link href={"/tools/blockchain/pair"}>Export transaction</Link>,
             key: "tool-blockchain-4",
           },
         ],

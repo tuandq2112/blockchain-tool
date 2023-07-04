@@ -8,11 +8,8 @@ import { configureChains, createConfig } from "wagmi";
 import { bsc, bscTestnet } from "wagmi/chains";
 
 const projectId = PROJECT_ID;
-const customTestnet = bscTestnet;
-customTestnet.rpcUrls.default = {
-  http: ["https://data-seed-prebsc-1-s1.binance.org:8545"],
-};
-const chains = [bsc, customTestnet];
+
+const chains = [bsc, bscTestnet];
 
 const { publicClient } = configureChains(chains, [w3mProvider({ projectId })]);
 export const wagmiConfig = createConfig({

@@ -194,7 +194,7 @@ export default function Home() {
                     </span>
                   </p>
                 ),
-                value:index,
+                value: index,
                 ...item,
               }))}
               onChange={onChange}

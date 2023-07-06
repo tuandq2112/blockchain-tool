@@ -85,11 +85,12 @@ export function capitalizeFirstLetter(string) {
 }
 const convertOneRecord = (typeData, values) => {
   let type = typeData.type;
+  
   if (
     (type.startsWith("uint") || type.startsWith("int")) &&
     !type.includes("[]")
   ) {
-    return ethers.utils.formatUnits(values, 0);
+    return values.toString();
   } else if (type == "tuple[]") {
     let components = typeData.components;
     let result = [];
@@ -111,7 +112,7 @@ const convertOneRecord = (typeData, values) => {
     let result = [];
     for (let index = 0; index < values.length; index++) {
       const element = values[index];
-      result.push(ethers.utils.formatUnits(element, 0));
+      result.push(element.toString());
     }
     return result;
   } else {
@@ -119,13 +120,14 @@ const convertOneRecord = (typeData, values) => {
   }
 };
 export function convertOutput(outputs, values) {
+  debugger
   if (outputs.length == 1) {
     return [convertOneRecord(outputs[0], values)];
   } else {
     let result = [];
     for (let index = 0; index < outputs.length; index++) {
       const output = outputs[index];
-      let data = convertOneRecord(output, values[output.name]);
+      let data = convertOneRecord(output, values[index]);
       result.push(data);
     }
 

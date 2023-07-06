@@ -3,6 +3,7 @@ import { Button, message } from "antd";
 import InputWithName from "components/base/InputWithName";
 import { StyledCollapse } from "components/styled";
 import useObjectState from "hooks/useObjectState";
+import { waitForTransaction } from "wagmi/actions";
 
 function FunctionWrite({ renderData, index, smartContract }) {
   const [state, setState] = useObjectState({
@@ -35,7 +36,7 @@ function FunctionWrite({ renderData, index, smartContract }) {
       } else {
         response = await smartContract.write[functionKey](inputs);
       }
-      let waitResponse = await response.wait();
+      let waitResponse = await waitForTransaction({ hash: response });
       message.success(`Write function ${functionKey} successfully!`);
     } catch (error) {
       message.error(error.reason || error.message);

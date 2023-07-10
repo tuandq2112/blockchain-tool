@@ -30,11 +30,18 @@ function FunctionWrite({ renderData, index, smartContract }) {
     try {
       let functionKey = renderData.name;
       let inputs = state.inputValues.filter((item) => !!item);
+      const args = inputs.map((item, i) => {
+        if (renderData.inputs[i].type.includes("[]")) {
+          return JSON.parse(item);
+        } else {
+          return item;
+        }
+      });
       if (isPayableFunction) {
         let values = { value: state.value };
-        response = await smartContract.write[functionKey](inputs, values);
+        response = await smartContract.write[functionKey](args, values);
       } else {
-        response = await smartContract.write[functionKey](inputs);
+        response = await smartContract.write[functionKey](args);
       }
       let waitResponse = await waitForTransaction({ hash: response });
       message.success(`Write function ${functionKey} successfully!`);

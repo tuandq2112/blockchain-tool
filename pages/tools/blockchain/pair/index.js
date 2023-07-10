@@ -7,97 +7,17 @@ import moment from "moment";
 import { erc20ABI, useAccount } from "wagmi";
 import * as XLSX from "xlsx";
 
-const listAccount = [
-  {
-    name: "Đỗ Duy Hưng",
-    accounts: [
-      "0x4a2F481bdB4f3Fe4e5A47D613DA074f1F4451Bb9",
-      "0x0091F923D2a6Dd103692797E58801D6B5372F422",
-    ],
-  },
-  {
-    name: "Đặng Thị Thùy Dung",
-    accounts: [
-      "0x3A1E2eB63EB823bb2F0f1c035B8a33C957023f9F",
-      "0x932e8556c56aa8C5E9531777897Ea430CDc5078b",
-    ],
-  },
-  {
-    name: "Nhữ Hương Quỳnh",
-    accounts: [
-      "0x05cd1325D1b5FDa893aDf3E7337880881B6feF3d",
-      "0x7FaB9f182Fa86Fa4fD5b0E43eB43390439c16D4F",
-    ],
-  },
-  {
-    name: "Lê Như Quỳnh",
-    accounts: [
-      "0x78c8F4d7CEC386C655DF6b1f02a18288b62bdF90",
-      "0xfAd4eB6a8a1745136Ee7a25c855cB96B500d104c",
-    ],
-  },
-  {
-    name: "Phạm Thị Thu Hiếu",
-    accounts: [
-      "0xCc626CF5901525E81e41Db6d1246A41EAf9D16eB",
-      "0x82BDE53327A556F52352aedc3c17720A6889532a",
-    ],
-  },
-  {
-    name: "Ngô Minh Tuấn",
-    accounts: [
-      "0xb906da3C102aFaF2510FBe962e59f570f50F6D1c",
-      "0x61Ba5135460f0744E529742a424E150ad81E4c07",
-    ],
-  },
-  {
-    name: "Ngô Quang Hiếu",
-    accounts: [
-      "0xff36EC5111640d09663a84d99cc4Ddac7ce32d6b",
-      "0x87235b9B34FCf872D561d477fB06a08f5581D683",
-    ],
-  },
-  {
-    name: "Đỗ Quốc Tuấn",
-    accounts: [
-      "0x899Ca417d550c0875E0C94E1eDD67Bdab187DB31",
-      "0x3b2CAF000A05A30bD16391F8a9c6c61983C18F56",
-    ],
-  },
-  {
-    name: "Trần Minh Đức",
-    accounts: ["0xf9dA4a329eb6E1852eC2BC8a2AFE6d818C151356"],
-  },
-  {
-    name: "Hoàng Minh Sơn",
-    accounts: [
-      "0xd9866589145067D11275e0949F0aE60F867b68C0",
-      "0x38122D39251Dd6f2D0Cd3d28bCC5FB55423CD632",
-    ],
-  },
-  {
-    name: "Trần Thế Vượng",
-    accounts: [
-      "0xbd15f97d58f8433a19686910fd9d6e966712ab6f",
-      "0x8c3F091c2016b19F16a18CBE0EDE3d9580D111EB",
-    ],
-  },
-  {
-    name: "Nguyễn Minh Duy",
-    accounts: ["0xf9dA4a329eb6E1852eC2BC8a2AFE6d818C151356"],
-  },
-  {
-    name: "Nguyễn Hương Giang",
-    accounts: ["0x69e37c6bae7ad952ad686c62afe3fa82642e98d8"],
-  },
-];
-
 function Pair() {
   const [state, setState] = useObjectState();
   const { connector, isConnected } = useAccount();
 
   const exportToExcel = async () => {
     setState({ loading: true });
+
+    const response = await axios.get(
+      `https://raw.githubusercontent.com/tuandq2112/ivirse-account/develop/account.json`
+    );
+    let listAccount = response.data;
     let listTx = await axios.get(
       "https://api.bscscan.com/api?module=account&action=tokentx&contractaddress=0x059ca11ba3099683Dc2e46f048063F5799a7f34c&startblock=0&endblock=999999999&sort=desc&apikey=FZ9TGE7XCY32G7YR7BDDBJ211CF7DMFF2G"
     );
@@ -226,6 +146,11 @@ function Pair() {
 
   const exportByTime = async () => {
     setState({ loading2: true });
+
+    const response = await axios.get(
+      `https://raw.githubusercontent.com/tuandq2112/ivirse-account/develop/account.json`
+    );
+    let listAccount = response.data;
     let listTx = await axios.get(
       "https://api.bscscan.com/api?module=account&action=tokentx&contractaddress=0x059ca11ba3099683Dc2e46f048063F5799a7f34c&startblock=0&endblock=999999999&sort=desc&apikey=FZ9TGE7XCY32G7YR7BDDBJ211CF7DMFF2G"
     );

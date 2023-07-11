@@ -25,8 +25,7 @@ export const HomeContext = createContext();
 
 export default function Home() {
   const [state, setState] = useObjectState({ abi: [] });
-  const { connector, isConnected } = useAccount();
-  const { data: walletClient, isError, isLoading } = useWalletClient();
+  const { data: walletClient, isSuccess } = useWalletClient();
 
   useEffect(() => {
     readContract();
@@ -243,7 +242,7 @@ export default function Home() {
               <Button
                 disabled={
                   !state.smartContractAddress ||
-                  !isConnected ||
+                  !isSuccess ||
                   !state.isValidABI
                 }
                 onClick={setupSmartContract}

@@ -1,5 +1,5 @@
-import { getContract } from "@wagmi/core";
-import { Button, Col, Form, Input, message, Row, Space, Table } from "antd";
+import { getContract, waitForTransaction } from "@wagmi/core";
+import { Button, Col, Form, Input, Row, Space, Table, message } from "antd";
 import { DeleteIcon, HoeIcon } from "assets/svg";
 import Erc20Builder from "builder/Erc20Builder";
 import BaseModal from "components/base/BaseModal";
@@ -43,8 +43,11 @@ function Deploy() {
         bytecode: Erc20Builder.bytecode,
         args: [state.name, state.symbol],
       })
+      .then(async (hash) => {
+        return await waitForTransaction({ hash });
+      })
       .then((res) => {
-        console.log(res);
+        addToken(res.contractAddress);
       });
   };
   const handleChangeInput = (event) => {
@@ -52,7 +55,7 @@ function Deploy() {
   };
 
   const saveData = (newTokens = []) => {
-    save(state.chainId, newTokens);
+    save(chain.id, newTokens);
   };
 
   const getData = () => {
@@ -93,6 +96,18 @@ function Deploy() {
     );
     setState({ contracts, loading: false });
   };
+
+  const addToken = async (contract) => {
+    if (ethers.utils.isAddress(contract)) {
+      let newToken = Object.assign([], state.tokens);
+      newToken.push(contract);
+      saveData(newToken);
+      setState({ tokens: newToken });
+      message.success("Import token successfully!");
+    } else {
+      message.error("Invalid address");
+    }
+  };
   const importToken = async () => {
     const contract = state.address;
 
@@ -110,8 +125,6 @@ function Deploy() {
     try {
       let newToken = Object.assign([], state.tokens);
       newToken.splice(index, 1);
-      debugger;
-
       saveData(newToken);
       setState({ tokens: newToken });
       message.success("Delete successfully!");
@@ -119,31 +132,28 @@ function Deploy() {
       message.success("Delete fail!");
     }
   };
-  const getChainId = async () => {
-    setState({ chainId: await connector.getChainId() });
-  };
+
   const submit = async (record) => {
+    const library = new ethers.providers.Web3Provider(walletClient);
     let erc20 = getContractInstance(
       record.address,
       Erc20Builder.abi,
-      await connector.getSigner()
+      library.getSigner()
     );
-    await form
-      .validateFields()
-      .then(async (res) => {
-        await erc20
-          .mint(res.address, parseEther(res.amount))
-          .then((res) => {
-            return res.wait();
-          })
-          .then((res) => {
-            message.success("Mint success!");
-            getContracts();
-          });
-      })
-      .catch((err) => {
-        message.error("Mint fail!");
-      });
+    await form.validateFields().then(async (res) => {
+      await erc20
+        .mint(res.address, parseEther(res.amount))
+        .then((res) => {
+          return res.wait();
+        })
+        .then((res) => {
+          message.success("Mint success!");
+          getContracts();
+        })
+        .catch((err) => {
+          message.error(err?.reason);
+        });
+    });
   };
   const showModal = (record) => () => {
     mintRef?.current?.show({
@@ -196,6 +206,7 @@ function Deploy() {
         >
           <Input />
         </Form.Item>
+
         <Form.Item
           name={"amount"}
           label="Amount"

@@ -4,9 +4,7 @@ import useObjectState from "hooks/useObjectState";
 import moment from "moment";
 import { BalanceHistoryWrapper } from "styles/styled";
 import { erc20ABI, useBlockNumber, usePublicClient } from "wagmi";
-const BSC_MAINNET_PROVIDER = new ethers.providers.JsonRpcProvider(
-  "https://rpc.ankr.com/bsc"
-);
+
 function BalanceHistory() {
   const [state, setState] = useObjectState();
   const publicClient = usePublicClient();
@@ -57,6 +55,9 @@ function BalanceHistory() {
   };
   const handleQueryCoin = async () => {
     setState({ queryCoinLoading: true });
+    const BSC_MAINNET_PROVIDER = new ethers.providers.JsonRpcProvider(
+      "https://rpc.ankr.com/bsc"
+    );
     getBlockNumberByTimeStamp(state.dateCoinPicked)
       .then(async (blockInfo) => {
         return await BSC_MAINNET_PROVIDER.getBalance(
@@ -77,27 +78,42 @@ function BalanceHistory() {
   };
   const handleQueryToken = () => {
     setState({ queryTokenLoading: true });
-
+    const BSC_MAINNET_PROVIDER = new ethers.providers.JsonRpcProvider(
+      "https://rpc.ankr.com/bsc"
+    );
     getBlockNumberByTimeStamp(state.dateTokenPicked)
       .then(async (blockInfo) => {
-        const contract = new ethers.Contract(
-          state.tokenAddress,
+        const contractUSDT = new ethers.Contract(
+          "0x55d398326f99059ff775485246999027b3197955",
           erc20ABI,
           BSC_MAINNET_PROVIDER
         );
-        return await contract.balanceOf(state.tokenUserAddress, {
+        const contractIVI = new ethers.Contract(
+          "0x059ca11ba3099683Dc2e46f048063F5799a7f34c",
+          erc20ABI,
+          BSC_MAINNET_PROVIDER
+        );
+        const balanceUSDT = await contractUSDT.balanceOf(
+          state.tokenUserAddress,
+          {
+            blockTag: Number(blockInfo.number),
+          }
+        );
+        const balanceIVI = await contractIVI.balanceOf(state.tokenUserAddress, {
           blockTag: Number(blockInfo.number),
         });
+        return { balanceUSDT, balanceIVI };
       })
-      .then((tokenBalance) => {
+
+      .then(({ balanceUSDT, balanceIVI }) => {
         setState({
-          tokenBalance: ethers.utils.formatUnits(tokenBalance, 18),
+          tokenBalanceIVI: ethers.utils.formatUnits(balanceIVI, 18),
+          tokenBalanceUSDT: ethers.utils.formatUnits(balanceUSDT, 18),
         });
-        message.success("Query success!");
+        message.success("Query success");
       })
       .catch((err) => {
-        console.log(err);
-        message.error(err);
+        message.error(err.reason || err.shortMessage || err.message);
       })
       .finally(() => {
         setState({ queryTokenLoading: false });
@@ -131,11 +147,11 @@ function BalanceHistory() {
             onChange={onPickTokenDate}
             value={state.dateTokenPicked}
           />{" "}
-          <Input
+          {/* <Input
             onChange={onChangeTokenAddress}
             placeholder="Input token address"
             value={state.tokenAddress}
-          />
+          /> */}
           <Input
             onChange={onChangeTokenUserAddress}
             placeholder="Input wallet address"
@@ -146,8 +162,8 @@ function BalanceHistory() {
           </Button>
           <hr />
           <p>
-            <span>Result: </span>
-            <span>{state.tokenBalance}</span>
+            <p>USDT: {state.tokenBalanceUSDT} </p>
+            <p>IVI: {state.tokenBalanceIVI} </p>
           </p>{" "}
         </Col>
       </Row>

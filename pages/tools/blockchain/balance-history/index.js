@@ -65,7 +65,7 @@ function BalanceHistory() {
         );
       })
       .then((coinBalance) => {
-        setState({ coinBalance });
+        setState({ coinBalance: ethers.utils.formatUnits(coinBalance, 18) });
         message.success("Query success!");
       })
       .catch((err) => {
@@ -90,8 +90,9 @@ function BalanceHistory() {
         });
       })
       .then((tokenBalance) => {
-        console.log(tokenBalance);
-        setState({ tokenBalance });
+        setState({
+          tokenBalance: ethers.utils.formatUnits(tokenBalance, 18),
+        });
         message.success("Query success!");
       })
       .catch((err) => {
@@ -120,7 +121,7 @@ function BalanceHistory() {
           <hr />
           <p>
             <span>Result: </span>
-            <span>{state.coinBalance?.toString()}</span>
+            <span>{state.coinBalance}</span>
           </p>
         </Col>
         <Col span={8}>
@@ -146,7 +147,7 @@ function BalanceHistory() {
           <hr />
           <p>
             <span>Result: </span>
-            <span>{state.tokenBalance?.toString()}</span>
+            <span>{state.tokenBalance}</span>
           </p>{" "}
         </Col>
       </Row>

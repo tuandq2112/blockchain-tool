@@ -1,5 +1,6 @@
 import { Button, Col, DatePicker, message, Row } from "antd";
 import axios from "axios";
+import { PairABI } from "builder/PairBuilder";
 import { ethers } from "ethers";
 import useObjectState from "hooks/useObjectState";
 import { isEmpty } from "lodash";
@@ -44,6 +45,14 @@ function Pair() {
       erc20ABI,
       jsonProvider
     );
+    const pairContract = new ethers.Contract(
+      "0x3F01d9F355dE832c9F458867fD41e6cCb73742a7",
+      PairABI,
+      jsonProvider
+    );
+    const reservers = await pairContract.getReserves();
+    const iviToUsdt = reservers[1].toString() / reservers[0].toString();
+    console.log(iviToUsdt);
     let result = [];
     let maxAccount = Math.max(
       ...listAccount.map((item) => item.accounts.length)
@@ -103,8 +112,8 @@ function Pair() {
         totalUSDT,
         totalIVI,
         totalBNB,
-        totalIVI * 0.07,
-        totalIVI * 0.07 + totalUSDT,
+        totalIVI * iviToUsdt,
+        totalIVI * iviToUsdt + totalUSDT,
       ];
       result.push(data);
     }
@@ -323,7 +332,7 @@ function Pair() {
   };
   return (
     <div>
-      <Row gutter={[24, 24]} justify="start">
+      <Row gutter={[24, 24]} justify="center">
         <Col span={4}>
           <DatePicker.RangePicker onChange={handleChangeRangeTime} />
         </Col>
@@ -336,7 +345,7 @@ function Pair() {
             Export transaction
           </Button>
         </Col>
-        <Col span={4}>
+        {/* <Col span={4}>
           <Button
             onClick={exportByTime}
             loading={state.loading2}
@@ -344,7 +353,7 @@ function Pair() {
           >
             Export transaction by date
           </Button>
-        </Col>
+        </Col> */}
         {/* <Col span={8}>
           <p> Donate for me: 0x1A3fb2c99e25391E2f5Bd786399576C797E69cce</p>
           <br />

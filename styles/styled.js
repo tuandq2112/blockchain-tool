@@ -92,3 +92,6 @@ export const ProfileWrapper = styled.div`
     max-width: 700px;
   }
 `;
+export const BalanceHistoryWrapper = styled.div`
+  /* ${baseWrapperCss} */
+`;

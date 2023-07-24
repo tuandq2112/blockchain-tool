@@ -43,8 +43,18 @@ const MenuConfig = [
             key: "tool-blockchain-3",
           },
           {
-            label: <Link href={"/tools/blockchain/pair"}>Export transaction</Link>,
+            label: (
+              <Link href={"/tools/blockchain/pair"}>Export transaction</Link>
+            ),
             key: "tool-blockchain-4",
+          },
+          {
+            label: (
+              <Link href={"/tools/blockchain/balance-history"}>
+                Get balance by time
+              </Link>
+            ),
+            key: "tool-blockchain-5",
           },
         ],
       },
@@ -62,4 +72,4 @@ const AvatarDropdownConfig = [
     label: <Link href={"/collection"}>Collection</Link>,
   },
 ];
-export { MenuConfig, AvatarDropdownConfig };
+export { AvatarDropdownConfig, MenuConfig };

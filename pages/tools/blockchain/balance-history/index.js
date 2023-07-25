@@ -108,7 +108,9 @@ function BalanceHistory() {
         const balanceIVI = await contractIVI.balanceOf(state.tokenUserAddress, {
           blockTag: Number(blockInfo.number),
         });
-        const reservers = await pairContract.getReserves();
+        const reservers = await pairContract.getReserves({
+          blockTag: Number(blockInfo.number),
+        });
         const iviToUsdt = reservers[1].toString() / reservers[0].toString();
         return { balanceUSDT, balanceIVI, iviToUsdt };
       })

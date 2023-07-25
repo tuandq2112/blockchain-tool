@@ -119,8 +119,8 @@ function BalanceHistory() {
           tokenBalanceUSDT: ethers.utils.formatUnits(balanceUSDT, 18),
           iviToUsdt,
           totalUSDT:
-            Number(ethers.utils.formatUnits(balanceIVI, 18)) +
-            iviToUsdt * Number(ethers.utils.formatUnits(balanceUSDT, 18)),
+            iviToUsdt * Number(ethers.utils.formatUnits(balanceIVI, 18)) +
+            Number(ethers.utils.formatUnits(balanceUSDT, 18)),
         });
         message.success("Query success");
       })

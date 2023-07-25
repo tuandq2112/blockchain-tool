@@ -117,7 +117,7 @@ function Pair() {
       ];
       result.push(data);
     }
-    result.sort((a, b) => b[maxAccount + 1] - a[maxAccount + 1]);
+    // result.sort((a, b) => b[maxAccount + 1] - a[maxAccount + 1]);
     const accountTitle = Array.from(Array(maxAccount)).map(
       (_, index) => "Ví " + index + 1
     );

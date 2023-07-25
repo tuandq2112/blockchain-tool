@@ -1,4 +1,5 @@
 import { Button, Col, DatePicker, Input, Row, message } from "antd";
+import { PairABI } from "builder/PairBuilder";
 import { ethers } from "ethers";
 import useObjectState from "hooks/useObjectState";
 import moment from "moment";
@@ -83,6 +84,11 @@ function BalanceHistory() {
     );
     getBlockNumberByTimeStamp(state.dateTokenPicked)
       .then(async (blockInfo) => {
+        const pairContract = new ethers.Contract(
+          "0x3F01d9F355dE832c9F458867fD41e6cCb73742a7",
+          PairABI,
+          BSC_MAINNET_PROVIDER
+        );
         const contractUSDT = new ethers.Contract(
           "0x55d398326f99059ff775485246999027b3197955",
           erc20ABI,
@@ -102,13 +108,19 @@ function BalanceHistory() {
         const balanceIVI = await contractIVI.balanceOf(state.tokenUserAddress, {
           blockTag: Number(blockInfo.number),
         });
-        return { balanceUSDT, balanceIVI };
+        const reservers = await pairContract.getReserves();
+        const iviToUsdt = reservers[1].toString() / reservers[0].toString();
+        return { balanceUSDT, balanceIVI, iviToUsdt };
       })
 
-      .then(({ balanceUSDT, balanceIVI }) => {
+      .then(({ balanceUSDT, balanceIVI, iviToUsdt }) => {
         setState({
           tokenBalanceIVI: ethers.utils.formatUnits(balanceIVI, 18),
           tokenBalanceUSDT: ethers.utils.formatUnits(balanceUSDT, 18),
+          iviToUsdt,
+          totalUSDT:
+            Number(ethers.utils.formatUnits(balanceIVI, 18)) +
+            iviToUsdt * Number(ethers.utils.formatUnits(balanceUSDT, 18)),
         });
         message.success("Query success");
       })
@@ -164,6 +176,8 @@ function BalanceHistory() {
           <p>
             <p>USDT: {state.tokenBalanceUSDT} </p>
             <p>IVI: {state.tokenBalanceIVI} </p>
+            <p>IVI to USDT: {state.iviToUsdt} </p>{" "}
+            <p>Total USDT: {state.totalUSDT} </p>
           </p>{" "}
         </Col>
       </Row>

@@ -36,7 +36,15 @@ function App({ Component, pageProps }) {
           </WagmiConfig>
         )}
         {!nonWeb3ModalPaths.includes(pathname) && (
-          <Web3Modal projectId={PROJECT_ID} ethereumClient={ethereumClient} />
+          <Web3Modal
+            projectId={PROJECT_ID}
+            ethereumClient={ethereumClient}
+            explorerRecommendedWalletIds={[
+              "4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0",
+              "060da523cddd8e2ce9c60dfff883f293b911c8e7e17ec8c70174069e9b5e716d",
+              "1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369",
+            ]}
+          />
         )}
       </Provider>
     </ConfigProvider>

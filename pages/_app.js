@@ -9,32 +9,43 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import store from "shared";
-import { GlobalStyled } from "styles/styled";
+import { CenterDiv, GlobalStyled } from "styles/styled";
 import { WagmiConfig } from "wagmi";
+import Image from "next/image";
+
 message.config({
   duration: 2,
   maxCount: 2,
 });
+
 function App({ Component, pageProps }) {
   const { pathname } = useRouter();
-  const [ready, setReady] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setReady(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 5000);
   }, []);
-
-  return (
+  return loading ? (
+    <CenterDiv>
+      <Image
+        alt="Picture of the author"
+        src={"/wait.gif"}
+        width="500"
+        height="500"
+      />{" "}
+    </CenterDiv>
+  ) : (
     <ConfigProvider>
       <Provider store={store}>
         <GlobalStyled />
         <DefaultHead />
-        {ready && (
-          <WagmiConfig config={wagmiConfig}>
-            <CustomLayout {...pageProps}>
-              <Component />
-            </CustomLayout>
-          </WagmiConfig>
-        )}
+        <WagmiConfig config={wagmiConfig}>
+          <CustomLayout {...pageProps}>
+            <Component />
+          </CustomLayout>
+        </WagmiConfig>
         {!nonWeb3ModalPaths.includes(pathname) && (
           <Web3Modal
             projectId={PROJECT_ID}

@@ -95,3 +95,7 @@ export const ProfileWrapper = styled.div`
 export const BalanceHistoryWrapper = styled.div`
   /* ${baseWrapperCss} */
 `;
+
+export const CenterDiv = styled.div`
+  ${baseWrapperCss}
+`;

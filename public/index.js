@@ -1,11 +1,9 @@
-import beautyWalletImage from "assets/images/beauty-wallet.jpg";
 import pathToImage from "constants/pathToImage";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
 function DefaultHead() {
   const router = useRouter();
-  console.log(router);
   return (
     <Head>
       <title>Welcome Naut's blogs</title>
@@ -28,7 +26,7 @@ function DefaultHead() {
       />
       <meta
         property="og:image"
-        content={pathToImage[router.pathname]?.image || beautyWalletImage}
+        content={pathToImage[router.pathname]?.image || "beauty-wallet.jpg"}
       />
     </Head>
   );

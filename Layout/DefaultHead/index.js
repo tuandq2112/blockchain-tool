@@ -1,4 +1,5 @@
 import pathToImage from "constants/pathToImage";
+import { HOST } from "env/config";
 import Head from "next/head";
 import { useRouter } from "next/router";
 

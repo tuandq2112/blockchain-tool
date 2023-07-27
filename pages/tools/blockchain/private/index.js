@@ -6,7 +6,6 @@ import { PrivateWrapper } from "styles/styled";
 import { phraseToPrivateKey } from "utils";
 function Private() {
   const [state, setState] = useObjectState({ checked: false });
-  const auth = useSelector((state) => state.auth);
 
   return (
     <PrivateWrapper>

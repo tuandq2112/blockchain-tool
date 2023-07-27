@@ -1,6 +1,6 @@
 import { Web3Modal } from "@web3modal/react";
 import CustomLayout from "Layout";
-import DefaultHead from "public";
+import DefaultHead from "Layout/DefaultHead";
 import { ConfigProvider, message } from "antd";
 import { nonWeb3ModalPaths } from "constants/global";
 import { ethereumClient, wagmiConfig } from "constants/web3modal";

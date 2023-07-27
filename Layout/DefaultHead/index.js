@@ -26,7 +26,9 @@ function DefaultHead() {
       />
       <meta
         property="og:image"
-        content={pathToImage[router.pathname]?.image || "/beauty-wallet.jpg"}
+        content={
+          HOST + (pathToImage[router.pathname]?.image || "/beauty-wallet.jpg")
+        }
       />
     </Head>
   );

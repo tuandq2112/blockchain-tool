@@ -12,6 +12,7 @@ import { Provider } from "react-redux";
 import store from "shared";
 import { CenterDiv, GlobalStyled } from "styles/styled";
 import { WagmiConfig } from "wagmi";
+BigInt.prototype.toJSON = function() { return this.toString() }
 
 message.config({
   duration: 2,
@@ -25,7 +26,7 @@ function App({ Component, pageProps }) {
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
-    }, 5000);
+    }, 2500);
   }, []);
   return (
     <>

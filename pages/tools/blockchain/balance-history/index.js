@@ -61,16 +61,33 @@ function BalanceHistory() {
     );
     getBlockNumberByTimeStamp(state.dateCoinPicked)
       .then(async (blockInfo) => {
-        return await BSC_MAINNET_PROVIDER.getBalance(
+        const coinBalance = await BSC_MAINNET_PROVIDER.getBalance(
           state.coinUserAddress,
           Number(blockInfo.number)
         );
+        console.log(coinBalance);
+        const pairContract = new ethers.Contract(
+          "0x16b9a82891338f9ba80e2d6970fdda79d1eb0dae",
+          PairABI,
+          BSC_MAINNET_PROVIDER
+        );
+        const reservers = await pairContract.getReserves({
+          blockTag: Number(blockInfo.number),
+        });
+        const bnbToUsdt = reservers[0].toString() / reservers[1].toString();
+
+        return { bnbToUsdt, coinBalance };
       })
-      .then((coinBalance) => {
-        setState({ coinBalance: ethers.utils.formatUnits(coinBalance, 18) });
+      .then(async ({ bnbToUsdt, coinBalance }) => {
+        setState({
+          coinBalance: ethers.utils.formatUnits(coinBalance, 18),
+          bnbToUsdt:
+            Number(ethers.utils.formatUnits(coinBalance, 18)) * bnbToUsdt,
+        });
         message.success("Query success!");
       })
       .catch((err) => {
+        console.log(err);
         message.error(err);
       })
       .finally(() => {
@@ -150,8 +167,12 @@ function BalanceHistory() {
           </Button>
           <hr />
           <p>
-            <span>Result: </span>
+            <span>BNB: </span>
             <span>{state.coinBalance}</span>
+          </p>
+          <p>
+            <span>BNB to USDT: </span>
+            <span>{state.bnbToUsdt}</span>{" "}
           </p>
         </Col>
         <Col span={8}>

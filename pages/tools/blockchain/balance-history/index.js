@@ -81,8 +81,7 @@ function BalanceHistory() {
       .then(async ({ bnbToUsdt, coinBalance }) => {
         setState({
           coinBalance: ethers.utils.formatUnits(coinBalance, 18),
-          bnbToUsdt:
-            Number(ethers.utils.formatUnits(coinBalance, 18)) * bnbToUsdt,
+          bnbToUsdt: bnbToUsdt,
         });
         message.success("Query success!");
       })
@@ -171,7 +170,7 @@ function BalanceHistory() {
             <span>{state.coinBalance}</span>
           </p>
           <p>
-            <span>BNB to USDT: </span>
+            <span>BNB to USDT (RATE): </span>
             <span>{state.bnbToUsdt}</span>{" "}
           </p>
         </Col>
@@ -199,7 +198,7 @@ function BalanceHistory() {
           <p>
             <p>USDT: {state.tokenBalanceUSDT} </p>
             <p>IVI: {state.tokenBalanceIVI} </p>
-            <p>IVI to USDT: {state.iviToUsdt} </p>{" "}
+            <p>IVI to USDT (RATE): {state.iviToUsdt} </p>{" "}
             <p>Total USDT: {state.totalUSDT} </p>
           </p>{" "}
         </Col>

@@ -7,11 +7,9 @@ WORKDIR /app
 # Copy the rest of the application code to the working directory
 COPY . .
 
-RUN npm i -g yarn
+RUN npm install
 
-RUN yarn
-
-RUN yarn run build --prod
+RUN npm run build --prod
 
 # Expose the port that the application will run on
 EXPOSE 3000

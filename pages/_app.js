@@ -3,16 +3,22 @@ import CustomLayout from "Layout";
 import DefaultHead from "Layout/DefaultHead";
 import { ConfigProvider, message } from "antd";
 import { nonWeb3ModalPaths } from "constants/global";
-import { ethereumClient, recommendWalletIDs, wagmiConfig } from "constants/web3modal";
+import {
+  ethereumClient,
+  recommendWalletIDs,
+  wagmiConfig,
+} from "constants/web3modal";
 import { PROJECT_ID } from "env/config";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import store from "shared";
-import { CenterDiv, GlobalStyled } from "styles/styled";
+import { GlobalStyled } from "styles/styled";
 import { WagmiConfig } from "wagmi";
-BigInt.prototype.toJSON = function() { return this.toString() }
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
 
 message.config({
   duration: 2,
@@ -32,14 +38,22 @@ function App({ Component, pageProps }) {
     <>
       <DefaultHead />
       {loading ? (
-        <CenterDiv>
+        <div
+          style={{
+            width: "100%",
+            height: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <Image
             alt="Picture of the author"
             src={"/wait.gif"}
-            width="500"
-            height="500"
+            width="400"
+            height="400"
           />{" "}
-        </CenterDiv>
+        </div>
       ) : (
         <ConfigProvider>
           <Provider store={store}>

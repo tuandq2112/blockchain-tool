@@ -1,9 +1,8 @@
 import { useWeb3Modal } from "@web3modal/react";
-import { Drawer, Dropdown, Tooltip, message } from "antd";
+import { message } from "antd";
 import { AvatarLoginIcon } from "assets/svg";
-import BaseModal from "components/base/BaseModal";
 import { LOGIN_INFORMATION } from "constants/key";
-import { AvatarDropdownConfig, MenuConfig } from "constants/menu";
+import { MenuConfig } from "constants/menu";
 import { read } from "data/LocalStorageProvider";
 import { SIGN_MESSAGE } from "env/config";
 import useObjectState from "hooks/useObjectState";
@@ -77,16 +76,14 @@ function Header() {
         defaultSelectedKeys={["2"]}
         items={MenuConfig}
       />
-      <div>
+      {/* <div> */}
         {/* <Dropdown
           menu={{ items: AvatarDropdownConfig }}
           placement="bottom"
           disabled={!isConnected}
           trigger="hover"
         > */}
-          <Tooltip title="Account" placement="left">
-            <AvatarLoginIcon onClick={open} />
-          </Tooltip>
+        <AvatarLoginIcon onClick={open} />
         {/* </Dropdown> */}
 
         {/* <Tooltip title="Wallet" onClick={onLogin}>
@@ -96,7 +93,7 @@ function Header() {
         <Tooltip title="Cart" onClick={openCartDrawer}>
           <CardIcon />
         </Tooltip> */}
-      </div>
+      {/* </div> */}
 
       {/* <Drawer
         title="Your wallet"

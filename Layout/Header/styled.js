@@ -4,7 +4,7 @@ const HEADER_HEIGHT = "80px";
 
 export const HeaderWrapper = styled.div`
   position: fixed;
-  width: 100%;
+  width: 100% !important;
   height: ${HEADER_HEIGHT};
   /* background-color: #03045e !important; */
   display: flex;
@@ -17,4 +17,6 @@ export const HeaderWrapper = styled.div`
   } */
 `;
 
-export const CustomMenu = styled(Menu)``;
+export const CustomMenu = styled(Menu)`
+  width: 90%;
+`;

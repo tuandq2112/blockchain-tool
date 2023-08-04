@@ -15,7 +15,7 @@ const MenuConfig = [
     key: 1,
   },
   {
-    label: "Tools",
+    label: <div>Tools</div>,
     key: 2,
     children: [
       {

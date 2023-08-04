@@ -60,4 +60,4 @@ ENV SERVICE_URL http://localhost:2112
 ENV TIMEOUT 86400
 ENV HOST https://tools.pokeheo.xyz
 
-CMD ["node", "server.js"]
+CMD ["npm", "start"]

@@ -1,6 +1,6 @@
 import { useWeb3Modal } from "@web3modal/react";
 import { Drawer, Dropdown, Tooltip, message } from "antd";
-import { AvatarLoginIcon, CardIcon, WalletIcon } from "assets/svg";
+import { AvatarLoginIcon } from "assets/svg";
 import BaseModal from "components/base/BaseModal";
 import { LOGIN_INFORMATION } from "constants/key";
 import { AvatarDropdownConfig, MenuConfig } from "constants/menu";
@@ -10,9 +10,9 @@ import useObjectState from "hooks/useObjectState";
 import moment from "moment";
 import { createRef } from "react";
 import { useDispatch } from "react-redux";
+import request from "utils/request";
 import { useAccount, useDisconnect } from "wagmi";
 import { CustomMenu, HeaderWrapper } from "./styled";
-import request from "utils/request";
 
 export const verifyRef = createRef();
 function Header() {
@@ -78,31 +78,27 @@ function Header() {
         items={MenuConfig}
       />
       <div>
-        <Dropdown
+        {/* <Dropdown
           menu={{ items: AvatarDropdownConfig }}
           placement="bottom"
           disabled={!isConnected}
           trigger="hover"
-        >
+        > */}
           <Tooltip title="Account" placement="left">
-            {isConnected ? (
-              <AvatarLoginIcon onClick={open} />
-            ) : (
-              <AvatarLoginIcon onClick={open} />
-            )}{" "}
+            <AvatarLoginIcon onClick={open} />
           </Tooltip>
-        </Dropdown>
+        {/* </Dropdown> */}
 
-        <Tooltip title="Wallet" onClick={onLogin}>
+        {/* <Tooltip title="Wallet" onClick={onLogin}>
           <WalletIcon />
         </Tooltip>
 
         <Tooltip title="Cart" onClick={openCartDrawer}>
           <CardIcon />
-        </Tooltip>
+        </Tooltip> */}
       </div>
 
-      <Drawer
+      {/* <Drawer
         title="Your wallet"
         placement="right"
         onClose={closeWalletDrawer}
@@ -122,8 +118,8 @@ function Header() {
         <p>Some contents...</p>
         <p>Some contents...</p>
         <p>Some contents...</p>
-      </Drawer>
-      <BaseModal title="Welcome to OpenHeo" ref={verifyRef}></BaseModal>
+      </Drawer> */}
+      {/* <BaseModal title="Welcome to OpenHeo" ref={verifyRef}></BaseModal> */}
     </HeaderWrapper>
   );
 }

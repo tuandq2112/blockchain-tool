@@ -12,11 +12,11 @@ const MenuConfig = [
         />{" "}
       </Link>
     ),
-    key: 1,
+    key: "home",
   },
   {
     label: <div>Tools</div>,
-    key: 2,
+    key: "tools",
     children: [
       {
         type: "group",
@@ -28,7 +28,7 @@ const MenuConfig = [
                 Phrase to private key
               </Link>
             ),
-            key: "tool-blockchain-1",
+            key: "private",
           },
           {
             label: (
@@ -36,17 +36,17 @@ const MenuConfig = [
                 Generate beauty wallet
               </Link>
             ),
-            key: "tool-blockchain-2",
+            key: "beauty-wallet",
           },
           {
             label: <Link href={"/tools/blockchain/deploy"}>Deploy</Link>,
-            key: "tool-blockchain-3",
+            key: "deploy",
           },
           {
             label: (
               <Link href={"/tools/blockchain/pair"}>Export transaction</Link>
             ),
-            key: "tool-blockchain-4",
+            key: "pair",
           },
           {
             label: (
@@ -54,7 +54,7 @@ const MenuConfig = [
                 Get balance by time
               </Link>
             ),
-            key: "tool-blockchain-5",
+            key: "balance-history",
           },
         ],
       },

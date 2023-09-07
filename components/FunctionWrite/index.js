@@ -31,7 +31,7 @@ function FunctionWrite({ renderData, index, smartContract }) {
       let functionKey = renderData.name;
       let inputs = state.inputValues.filter((item) => !!item);
       const args = inputs.map((item, i) => {
-        if (renderData.inputs[i].type.includes("[]")) {
+        if (renderData.inputs[i].type.includes("tuple")) {
           return JSON.parse(item);
         } else {
           return item;

@@ -23,7 +23,6 @@ function FunctionView({ renderData, index, smartContract }) {
       if (isEmpty(renderData.inputs)) {
         let functionKey = renderData.name;
         let values = await smartContract.read[functionKey]();
-        console.log(values);
         setState({
           outputValues: convertOutput(renderData.outputs, values),
         });
@@ -46,8 +45,8 @@ function FunctionView({ renderData, index, smartContract }) {
           }
         });
       let values = await smartContract.read[functionKey](inputs);
-
-      setState({ outputValues: [values] });
+      console.log(convertOutput(renderData.outputs, values));
+      setState({ outputValues: convertOutput(renderData.outputs, values) });
     } catch (error) {
       message.error(error.reason || error.message);
     }
@@ -103,7 +102,11 @@ function FunctionView({ renderData, index, smartContract }) {
                     <pre>{JSON.stringify(state.outputValues[index])}</pre>
                   </div>
                 ) : (
-                  <span>{state.outputValues[index]}</span>
+                  <span>
+                    {typeof state.outputValues[index] === "string"
+                      ? state.outputValues[index]
+                      : state.outputValues[index]?.toString()}
+                  </span>
                 )}
                 <span>: </span>
                 <span>{outputData.type}</span>

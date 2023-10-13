@@ -53,6 +53,8 @@ function Pair() {
       amount: allTransaction
         .filter((subItem) => address == subItem.from)
         .reduce((a, b) => a + Number(b.value) / 1e18, 0),
+      countTx: allTransaction.filter((subItem) => address == subItem.from)
+        .length,
     }));
     userWithToken.sort((a, b) => b.amount - a.amount);
     setState({
@@ -85,10 +87,14 @@ function Pair() {
   };
 
   const exportUser = () => {
-    const data = state.userWithToken.map((item) => [item.address, item.amount]);
-    data.unshift(["Ví", "Số lượng"]);
+    const data = state.userWithToken.map((item) => [
+      item.address,
+      item.countTx,
+      item.amount,
+    ]);
+    data.unshift(["Ví", "Số lần giao dịch", "Số lượng"]);
     const ws = XLSX.utils.aoa_to_sheet(data);
-    const columnWidths = [{ wch: 50 }, { wch: 20 }];
+    const columnWidths = [{ wch: 50 }, { wch: 20 }, { wch: 20 }];
     ws["!cols"] = columnWidths;
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, moment().format("dd-MM-YYYY"));
@@ -177,6 +183,11 @@ function Pair() {
                   title: "Địa chỉ",
                   dataIndex: ["address"],
                   key: "address",
+                },
+                {
+                  title: "Số lần giao dịch",
+                  dataIndex: ["countTx"],
+                  key: "countTx",
                 },
                 {
                   title: "Số lượng",

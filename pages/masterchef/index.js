@@ -121,7 +121,7 @@ function Pair() {
     >
       <div>
         <Row gutter={[24, 24]} justify="center">
-          <Col span={8}>
+          <Col span={11}>
             <h1 style={{ color: "black", fontWeight: "700", fontSize: "40px" }}>
               Xếp hạng đội
             </h1>
@@ -166,7 +166,7 @@ function Pair() {
               pagination={false}
             />
           </Col>
-          <Col span={8}>
+          <Col span={11}>
             <h1 style={{ color: "black", fontWeight: "700", fontSize: "40px" }}>
               Xếp hạng người dùng
             </h1>
@@ -185,12 +185,12 @@ function Pair() {
                   key: "address",
                 },
                 {
-                  title: "Số lần giao dịch",
+                  title: "Số giao dịch",
                   dataIndex: ["countTx"],
                   key: "countTx",
                 },
                 {
-                  title: "Số lượng",
+                  title: "Số IVI",
                   dataIndex: ["amount"],
                   key: "amount",
                 },

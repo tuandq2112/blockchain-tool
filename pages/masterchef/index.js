@@ -21,15 +21,12 @@ function Pair() {
     const response = await axios.get(
       `https://raw.githubusercontent.com/tuandq2112/ivirse-account/develop/ksk.json`
     );
-    let listAccount = [
-      ...response.data,
-      { contract: "0x93c2c94e68150698c50849f820bf07793d767c96" },
-    ];
+    let listAccount = response.data;
 
     for (let index = 0; index < listAccount.length; index++) {
       const data = listAccount[index];
       const response = await axios.get(
-        `https://api.bscscan.com/api?module=account&action=tokentx&address=${data.contract}&contractAddress=0x059ca11ba3099683dc2e46f048063f5799a7f34c&startblock=0&endblock=999999999&sort=desc&apikey=FZ9TGE7XCY32G7YR7BDDBJ211CF7DMFF2G`
+        `https://api.bscscan.com/api?module=account&action=tokentx&address=${data.contract}&contractAddress=0x059ca11ba3099683dc2e46f048063f5799a7f34c&startblock=0&endblock=999999999&sort=desc&apikey=57HPF862X6UYBMRWYT52842N9ZUVV8QA59`
       );
       const transactions = response.data.result;
       data.transactions = transactions.filter(

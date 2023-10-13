@@ -1,5 +1,5 @@
 import { Button, Col, Row, Table } from "antd";
-import masterChefPath from "assets/images/masterChef.jpg";
+import masterChefPath from "assets/images/masterChef.png";
 import axios from "axios";
 import useObjectState from "hooks/useObjectState";
 import moment from "moment";
@@ -19,7 +19,9 @@ function Pair() {
 
   const fetchData = async () => {
     const response = await axios.get(
-      `https://raw.githubusercontent.com/tuandq2112/ivirse-account/develop/ksk.json`
+      `https://raw.githubusercontent.com/tuandq2112/ivirse-account/develop/ksk.json?time=${moment().format(
+        "HH:mm:ss"
+      )}`
     );
     let listAccount = response.data;
 
@@ -41,11 +43,24 @@ function Pair() {
       await sleep(1000);
     }
     listAccount.sort((a, b) => b.totalToken - a.totalToken);
-    setState({ dataSource: listAccount });
+    const allTransaction = listAccount.reduce(
+      (a, b) => [...a, ...b.transactions],
+      []
+    );
+    const listUserAddress = new Set(allTransaction.map((item) => item.from));
+    const userWithToken = [...listUserAddress].map((address) => ({
+      address,
+      amount: allTransaction
+        .filter((subItem) => address == subItem.from)
+        .reduce((a, b) => a + Number(b.value) / 1e18, 0),
+    }));
+    userWithToken.sort((a, b) => b.amount - a.amount);
+    setState({
+      dataSource: listAccount,
+      userWithToken: userWithToken.slice(0, 5),
+    });
   };
-
-  const exportToExcel = () => {
-    setState({ loading: true });
+  const exportTeam = () => {
     const data = state.dataSource.map((item) => [
       item.name,
       item.address,
@@ -65,12 +80,26 @@ function Pair() {
     XLSX.utils.book_append_sheet(wb, ws, moment().format("dd-MM-YYYY"));
     XLSX.writeFile(
       wb,
-      `Masterchef report ${moment().format("dd-MM-YYYY HH:mm:ss")}.xlsx`
+      `Masterchef team report ${moment().format("dd-MM-YYYY HH:mm:ss")}.xlsx`
     );
-    setState({ loading: false });
+  };
+
+  const exportUser = () => {
+    const data = state.userWithToken.map((item) => [item.address, item.amount]);
+    data.unshift(["Ví", "Số lượng"]);
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    const columnWidths = [{ wch: 50 }, { wch: 20 }];
+    ws["!cols"] = columnWidths;
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, moment().format("dd-MM-YYYY"));
+    XLSX.writeFile(
+      wb,
+      `Masterchef user report ${moment().format("dd-MM-YYYY HH:mm:ss")}.xlsx`
+    );
   };
 
   useEffect(() => {
+    fetchData();
     let intervalRef = setInterval(() => {
       fetchData();
     }, 10000);
@@ -81,19 +110,15 @@ function Pair() {
     <div
       style={{
         backgroundImage: `url('${masterChefPath.src}')`,
-        marginTop: "50px",
-        height: "500px",
+        height: "100%",
       }}
     >
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        {" "}
-        <h1 style={{ color: "white", fontWeight: "700", fontSize: "40px" }}>
-          Masterchef IVI
-        </h1>
-      </div>
       <div>
         <Row gutter={[24, 24]} justify="center">
-          <Col span={16}>
+          <Col span={8}>
+            <h1 style={{ color: "black", fontWeight: "700", fontSize: "40px" }}>
+              Xếp hạng đội
+            </h1>
             <Table
               dataSource={state.dataSource}
               columns={[
@@ -108,11 +133,7 @@ function Pair() {
                   dataIndex: ["name"],
                   key: "name",
                 },
-                {
-                  title: "Địa chỉ",
-                  dataIndex: ["address"],
-                  key: "address",
-                },
+
                 {
                   title: "Tổng lượt mua bán",
                   dataIndex: ["totalTx"],
@@ -132,7 +153,46 @@ function Pair() {
                   </Table.Summary.Cell>
 
                   <Table.Summary.Cell>
-                    <Button onClick={exportToExcel}>Export</Button>
+                    <Button onClick={exportTeam}>Export</Button>
+                  </Table.Summary.Cell>
+                </Table.Summary.Row>
+              )}
+              pagination={false}
+            />
+          </Col>
+          <Col span={8}>
+            <h1 style={{ color: "black", fontWeight: "700", fontSize: "40px" }}>
+              Xếp hạng người dùng
+            </h1>
+            <Table
+              dataSource={state.userWithToken}
+              columns={[
+                {
+                  title: "Hạng",
+                  dataIndex: ["index"],
+                  key: "index",
+                  render: (...args) => args[2] + 1,
+                },
+                {
+                  title: "Địa chỉ",
+                  dataIndex: ["address"],
+                  key: "address",
+                },
+                {
+                  title: "Số lượng",
+                  dataIndex: ["amount"],
+                  key: "amount",
+                },
+              ]}
+              rowKey={"address"}
+              summary={() => (
+                <Table.Summary.Row>
+                  <Table.Summary.Cell>
+                    <span style={{ fontWeight: "bold" }}>Export</span>
+                  </Table.Summary.Cell>
+
+                  <Table.Summary.Cell>
+                    <Button onClick={exportUser}>Export</Button>
                   </Table.Summary.Cell>
                 </Table.Summary.Row>
               )}

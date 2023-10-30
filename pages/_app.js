@@ -37,7 +37,7 @@ function App({ Component, pageProps }) {
   return (
     <>
       <DefaultHead />
-      {loading ? (
+      {/* {loading ? (
         <div
           style={{
             width: "100%",
@@ -54,7 +54,7 @@ function App({ Component, pageProps }) {
             height="400"
           />{" "}
         </div>
-      ) : (
+      ) : ( */}
         <ConfigProvider>
           <Provider store={store}>
             <GlobalStyled />
@@ -72,7 +72,7 @@ function App({ Component, pageProps }) {
             )}
           </Provider>
         </ConfigProvider>
-      )}
+      {/* )} */}
     </>
   );
 }

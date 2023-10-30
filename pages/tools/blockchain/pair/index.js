@@ -1,16 +1,19 @@
-import { Button, Col, DatePicker, Row, Table } from "antd";
+import { Button, Col, DatePicker, InputNumber, Row } from "antd";
 import axios from "axios";
 import { PairABI } from "builder/PairBuilder";
+import { RouterV2ABI } from "builder/RouterV2ABI";
 import { ethers } from "ethers";
 import useObjectState from "hooks/useObjectState";
-import { isEmpty } from "lodash";
+import { debounce, isEmpty } from "lodash";
 import moment from "moment";
-import { formatUnits } from "viem";
-import { erc20ABI, useContractEvent, useContractRead } from "wagmi";
+import { formatUnits, parseEther } from "viem";
+import { erc20ABI, useContractRead } from "wagmi";
 import * as XLSX from "xlsx";
-
 function Pair() {
-  const [state, setState] = useObjectState({ dataSource: [] });
+  const [state, setState] = useObjectState({
+    dataSource: [],
+    inputIvi: parseEther("1000"),
+  });
   const { data } = useContractRead({
     address: "0x3F01d9F355dE832c9F458867fD41e6cCb73742a7",
     abi: PairABI,
@@ -19,17 +22,32 @@ function Pair() {
     chainId: 56,
   });
 
-  useContractEvent({
-    address: "0x3F01d9F355dE832c9F458867fD41e6cCb73742a7",
-    abi: PairABI,
-    eventName: "Swap",
-    listener: (events) => {
-      console.log(events);
-      const dataSource = [...state.dataSource, ...events];
-      setState({ dataSource });
-    },
+  const { data: amountOuts } = useContractRead({
+    address: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+    abi: RouterV2ABI,
+    functionName: "getAmountsOut",
+    watch: true,
     chainId: 56,
+    args: [
+      state.inputIvi,
+      [
+        "0x059ca11ba3099683Dc2e46f048063F5799a7f34c",
+        "0x55d398326f99059fF775485246999027B3197955",
+      ],
+    ],
+    enabled: state.inputIvi,
   });
+
+  // useContractEvent({
+  //   address: "0x3F01d9F355dE832c9F458867fD41e6cCb73742a7",
+  //   abi: PairABI,
+  //   eventName: "Swap",
+  //   listener: (events) => {
+  //     const dataSource = [...state.dataSource, ...events];
+  //     setState({ dataSource });
+  //   },
+  //   chainId: 56,
+  // });
 
   const exportToExcel = async () => {
     setState({ loading: true });
@@ -71,7 +89,6 @@ function Pair() {
     );
     const reservers = await pairContract.getReserves();
     const iviToUsdt = reservers[1].toString() / reservers[0].toString();
-    console.log(iviToUsdt);
     let result = [];
     let maxAccount = Math.max(
       ...listAccount.map((item) => item.accounts.length)
@@ -176,16 +193,28 @@ function Pair() {
     setState({ filterTime: times });
   };
 
-  const rate = `1 IVI =  ${
-    data
-      ? Number(formatUnits(data[1], 18)) / Number(formatUnits(data[0], 18))
-      : 0
-  } USDT`;
+  const rate = data
+    ? `1 IVI =  ${
+        Number(formatUnits(data[1], 18)) / Number(formatUnits(data[0], 18))
+      } USDT`
+    : "";
+  const onChangeInput = debounce((value) => {
+    setState({ inputIvi: parseEther(value?.toString()) });
+  }, 300);
 
-  console.log(state);
   return (
     <div>
-      <Row gutter={[24, 24]} justify="center">
+      <Row gutter={[24, 24]} justify="start">
+        {" "}
+        <Col span={8}>
+          <h1>{rate}</h1>
+        </Col>
+        <Col span={24}>
+          <InputNumber onChange={onChangeInput} />
+          <label>
+            {amountOuts?.[1] ? formatUnits(amountOuts?.[1], 18) : ""}
+          </label>
+        </Col>
         <Col span={24}>
           <DatePicker.RangePicker onChange={handleChangeRangeTime} />
           <Button
@@ -196,12 +225,7 @@ function Pair() {
             Export transaction
           </Button>
         </Col>
-
-        <Col span={8}>
-          <h1>{rate}</h1>
-        </Col>
-
-        <Col span={16}>
+        {/* <Col span={16}>
           <Table
             dataSource={state.dataSource}
             columns={[
@@ -251,7 +275,7 @@ function Pair() {
               },
             ]}
           />
-        </Col>
+        </Col> */}
       </Row>
     </div>
   );

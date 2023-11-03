@@ -45,7 +45,6 @@ function FunctionView({ renderData, index, smartContract }) {
           }
         });
       let values = await smartContract.read[functionKey](inputs);
-      console.log(convertOutput(renderData.outputs, values));
       setState({ outputValues: convertOutput(renderData.outputs, values) });
     } catch (error) {
       message.error(error.reason || error.message);

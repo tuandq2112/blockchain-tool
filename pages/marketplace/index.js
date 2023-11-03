@@ -20,12 +20,6 @@ function Marketplace() {
       }
     }
 
-    // const file = await client.get(
-    //   "QmbDe3rtrpiPpNnDebKDVh92DbhmFHVpmnh6ngJxZ246k2"
-    // );
-    // fetchDataFromPath("QmbDe3rtrpiPpNnDebKDVh92DbhmFHVpmnh6ngJxZ246k2").then(
-    //   console.log
-    // );
   };
   return (
     <div>

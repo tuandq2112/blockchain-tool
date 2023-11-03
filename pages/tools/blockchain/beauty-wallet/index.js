@@ -28,7 +28,6 @@ function BeautyWallet() {
           });
         })
         .catch((err) => {
-          console.log(err);
         })
         .finally(() => {
           setState({ loading: false });

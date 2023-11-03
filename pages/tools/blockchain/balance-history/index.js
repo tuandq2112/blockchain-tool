@@ -65,7 +65,6 @@ function BalanceHistory() {
           state.coinUserAddress,
           Number(blockInfo.number)
         );
-        console.log(coinBalance);
         const pairContract = new ethers.Contract(
           "0x16b9a82891338f9ba80e2d6970fdda79d1eb0dae",
           PairABI,
@@ -86,7 +85,6 @@ function BalanceHistory() {
         message.success("Query success!");
       })
       .catch((err) => {
-        console.log(err);
         message.error(err);
       })
       .finally(() => {

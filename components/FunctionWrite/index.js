@@ -39,8 +39,10 @@ function FunctionWrite({ renderData, index, smartContract }) {
       });
       if (isPayableFunction) {
         let values = { value: state.value };
+        const gas = await smartContract.estimateGas[functionKey](args, values);
         response = await smartContract.write[functionKey](args, values);
       } else {
+        const gas = await smartContract.estimateGas[functionKey](args);
         response = await smartContract.write[functionKey](args);
       }
       let waitResponse = await waitForTransaction({ hash: response });

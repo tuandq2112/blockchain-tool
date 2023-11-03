@@ -23,7 +23,6 @@ function Profile() {
 
   const customRequest = async (options) => {
     const { onSuccess, onError, file, onProgress } = options;
-    console.log(file);
     uploadSingleFile(file)
       .then((res) => {
         getSingleFile(res.filename).then((res2) => {
@@ -35,7 +34,6 @@ function Profile() {
 
   const onFinish = () => {
     form.validateFields().then((res) => {
-      console.log(res);
     });
   };
   return (

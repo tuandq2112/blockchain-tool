@@ -9,7 +9,7 @@ import moment from "moment";
 import { formatUnits, parseEther } from "viem";
 import { erc20ABI, useContractRead } from "wagmi";
 import * as XLSX from "xlsx";
-function Pair() {
+export default function Pair({ usdtToVndPrice }) {
   const [state, setState] = useObjectState({
     dataSource: [],
     inputIvi: parseEther("1000"),
@@ -37,17 +37,6 @@ function Pair() {
     ],
     enabled: state.inputIvi,
   });
-
-  // useContractEvent({
-  //   address: "0x3F01d9F355dE832c9F458867fD41e6cCb73742a7",
-  //   abi: PairABI,
-  //   eventName: "Swap",
-  //   listener: (events) => {
-  //     const dataSource = [...state.dataSource, ...events];
-  //     setState({ dataSource });
-  //   },
-  //   chainId: 56,
-  // });
 
   const exportToExcel = async () => {
     setState({ loading: true });
@@ -202,6 +191,10 @@ function Pair() {
     setState({ inputIvi: parseEther(value?.toString()) });
   }, 300);
 
+  const usdt = amountOuts?.[1] ? formatUnits(amountOuts?.[1], 18) : 0;
+  let vnd = Number(usdt) * Number(usdtToVndPrice);
+  vnd = vnd.toLocaleString("en-US", { style: "currency", currency: "VND" });
+  const displayPrice = usdtToVndPrice ? `${vnd} VND` : `${usdt} USDT`;
   return (
     <div>
       <Row gutter={[24, 24]} justify="start">
@@ -210,10 +203,8 @@ function Pair() {
           <h1>{rate}</h1>
         </Col>
         <Col span={24}>
-          <InputNumber onChange={onChangeInput} />
-          <label>
-            {amountOuts?.[1] ? formatUnits(amountOuts?.[1], 18) : ""}
-          </label>
+          <InputNumber onChange={onChangeInput} defaultValue={1000} />
+          <label>{displayPrice}</label>
         </Col>
         <Col span={24}>
           <DatePicker.RangePicker onChange={handleChangeRangeTime} />
@@ -280,5 +271,23 @@ function Pair() {
     </div>
   );
 }
-
-export default Pair;
+export async function getStaticProps() {
+  const response = axios.get(
+    "https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest",
+    {
+      params: {
+        convert: "VND",
+        symbol: "USDT",
+      },
+      headers: {
+        "X-CMC_PRO_API_KEY": "6d789551-f244-4271-86d8-47c8cb651290",
+      },
+    }
+  );
+  const responseBody = (await response).data;
+  const usdtToVndPrice = responseBody?.data?.USDT?.[0]?.quote?.VND?.price || 0;
+  return {
+    props: { usdtToVndPrice },
+    revalidate: 60 * 60 * 12, //12 hours
+  };
+}

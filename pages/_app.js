@@ -9,7 +9,6 @@ import {
   wagmiConfig,
 } from "constants/web3modal";
 import { PROJECT_ID } from "env/config";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Provider } from "react-redux";
@@ -55,23 +54,23 @@ function App({ Component, pageProps }) {
           />{" "}
         </div>
       ) : ( */}
-        <ConfigProvider>
-          <Provider store={store}>
-            <GlobalStyled />
-            <WagmiConfig config={wagmiConfig}>
-              <CustomLayout {...pageProps}>
-                <Component />
-              </CustomLayout>
-            </WagmiConfig>
-            {!nonWeb3ModalPaths.includes(pathname) && (
-              <Web3Modal
-                projectId={PROJECT_ID}
-                ethereumClient={ethereumClient}
-                explorerRecommendedWalletIds={recommendWalletIDs}
-              />
-            )}
-          </Provider>
-        </ConfigProvider>
+      <ConfigProvider>
+        <Provider store={store}>
+          <GlobalStyled />
+          <WagmiConfig config={wagmiConfig}>
+            <CustomLayout>
+              <Component {...pageProps} />
+            </CustomLayout>
+          </WagmiConfig>
+          {!nonWeb3ModalPaths.includes(pathname) && (
+            <Web3Modal
+              projectId={PROJECT_ID}
+              ethereumClient={ethereumClient}
+              explorerRecommendedWalletIds={recommendWalletIDs}
+            />
+          )}
+        </Provider>
+      </ConfigProvider>
       {/* )} */}
     </>
   );

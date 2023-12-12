@@ -194,7 +194,8 @@ export default function Pair({ usdtToVndPrice }) {
   const usdt = amountOuts?.[1] ? formatUnits(amountOuts?.[1], 18) : 0;
   let vnd = Number(usdt) * Number(usdtToVndPrice);
   vnd = vnd.toLocaleString("en-US", { style: "currency", currency: "VND" });
-  const displayPrice = usdtToVndPrice ? `${vnd} VND` : `${usdt} USDT`;
+  const displayVND = `${vnd} VND`;
+  const displayUSDT = `${usdt} USDT`;
   return (
     <div>
       <Row gutter={[24, 24]} justify="start">
@@ -204,7 +205,11 @@ export default function Pair({ usdtToVndPrice }) {
         </Col>
         <Col span={24}>
           <InputNumber onChange={onChangeInput} defaultValue={1000} />
-          <label>{displayPrice}</label>
+          <br />
+          <label>{displayVND}</label>
+          <br />
+
+          <label>{displayUSDT}</label>
         </Col>
         <Col span={24}>
           <DatePicker.RangePicker onChange={handleChangeRangeTime} />

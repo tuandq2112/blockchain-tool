@@ -1,5 +1,5 @@
 import { useWeb3Modal } from "@web3modal/react";
-import { message } from "antd";
+import { Dropdown, Select, Tooltip, message } from "antd";
 import { AvatarLoginIcon } from "assets/svg";
 import { LOGIN_INFORMATION } from "constants/key";
 import { MenuConfig } from "constants/menu";
@@ -10,7 +10,7 @@ import moment from "moment";
 import { createRef } from "react";
 import { useDispatch } from "react-redux";
 import request from "utils/request";
-import { useAccount, useDisconnect } from "wagmi";
+import { useAccount, useDisconnect, useNetwork, useSwitchNetwork } from "wagmi";
 import { CustomMenu, HeaderWrapper } from "./styled";
 
 export const verifyRef = createRef();
@@ -18,13 +18,14 @@ function Header() {
   /**
    * @hook
    */
-  const { connector, isConnected } = useAccount();
+  const { connector, isConnected, address } = useAccount();
   const { open } = useWeb3Modal();
   const { disconnect } = useDisconnect();
   const [state, setState] = useObjectState();
   const { cartOpen, walletOpen } = state;
   const { login, updateData } = useDispatch().auth;
-
+  const { chains, chain } = useNetwork();
+  const { switchNetwork } = useSwitchNetwork();
   /**
    * @function
    */
@@ -76,17 +77,48 @@ function Header() {
         defaultSelectedKeys={["2"]}
         items={MenuConfig}
       />
-      {/* <div> */}
-        {/* <Dropdown
-          menu={{ items: AvatarDropdownConfig }}
+      <div style={{ display: "flex", gap: "20px" }}>
+        <Tooltip title={address}>
+          <strong
+            style={{
+              width: "100px",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textAlign: "center",
+              verticalAlign: "middle",
+              lineHeight: "30px",
+            }}
+          >
+            {address}
+          </strong>
+        </Tooltip>{" "}
+        <Dropdown
+          menu={{
+            items: [
+              {
+                key: "1",
+                label: <strong onClick={disconnect}>Disconnect</strong>,
+              },
+            ],
+          }}
           placement="bottom"
           disabled={!isConnected}
           trigger="hover"
-        > */}
-        <AvatarLoginIcon onClick={open} />
-        {/* </Dropdown> */}
+        >
+          <AvatarLoginIcon onClick={open} />
+        </Dropdown>
+        <Select
+          options={chains.map((item) => ({ label: item.name, value: item.id }))}
+          value={chain?.id}
+          onChange={switchNetwork}
+        />
+        {/* <Tooltip title={"Click to view detail"}> */}
+        {/* </Tooltip> */}
+      </div>
+      {/* <div> */}
 
-        {/* <Tooltip title="Wallet" onClick={onLogin}>
+      {/* <Tooltip title="Wallet" onClick={onLogin}>
           <WalletIcon />
         </Tooltip>
 

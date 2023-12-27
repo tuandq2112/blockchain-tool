@@ -109,7 +109,10 @@ function Header() {
           <AvatarLoginIcon onClick={open} />
         </Dropdown>
         <Select
-          options={chains.map((item) => ({ label: item.name, value: item.id }))}
+          options={(chains || []).map((item) => ({
+            label: item.name,
+            value: item.id,
+          }))}
           value={chain?.id}
           onChange={switchNetwork}
         />

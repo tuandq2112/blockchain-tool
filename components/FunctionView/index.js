@@ -5,11 +5,14 @@ import { StyledCollapse } from "components/styled";
 import useObjectState from "hooks/useObjectState";
 import { isEmpty } from "lodash";
 import { convertOutput, copyToClipBoard } from "utils";
+import { getFunctionSelector } from "viem";
 function FunctionView({ renderData, index, smartContract }) {
+  
   const [state, setState] = useObjectState({
     inputValues: [],
     outputValues: [],
   });
+  const METHOD_ID = getFunctionSelector(renderData);
 
   let isShowQuery = renderData.inputs.length > 0;
   const onChange = (inputKey) => (event) => {
@@ -62,7 +65,7 @@ function FunctionView({ renderData, index, smartContract }) {
       )}
       onChange={handleOpenFunctionBlank}
     >
-      <StyledCollapse.Panel header={`${index + 1}. ${renderData.name}`}>
+      <StyledCollapse.Panel         header={`${index + 1}. ${renderData.name} (${METHOD_ID})`}>
         {renderData.inputs.map((inputData, inputKey) => {
           return (
             <InputWithName

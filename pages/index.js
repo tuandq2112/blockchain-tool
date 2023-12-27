@@ -3,6 +3,7 @@ import { getContract } from "@wagmi/core";
 import {
   Button,
   Col,
+  Descriptions,
   Input,
   Row,
   Select,
@@ -19,7 +20,8 @@ import useObjectState from "hooks/useObjectState";
 import { isArray } from "lodash";
 import { createContext, useEffect } from "react";
 import { HomeWrapper } from "styles/styled";
-import { useAccount, useWalletClient } from "wagmi";
+import { decodeFunctionData } from "viem";
+import { useWalletClient } from "wagmi";
 const { Dragger } = Upload;
 export const HomeContext = createContext();
 
@@ -169,6 +171,18 @@ export default function Home() {
     });
   };
 
+  const inputDataEncoded = (event) => {
+    setState({ dataEncoded: event.target.value });
+  };
+
+  const handleDecodeData = () => {
+    const decodedData = decodeFunctionData({
+      abi: state.abi,
+      data: state.dataEncoded,
+    });
+    setState({ decodedData });
+  };
+
   return (
     <HomeContext.Provider value={state.smartContract}>
       {" "}
@@ -239,9 +253,7 @@ export default function Home() {
             <Space>
               <Button
                 disabled={
-                  !state.smartContractAddress ||
-                  !isSuccess ||
-                  !state.isValidABI
+                  !state.smartContractAddress || !isSuccess || !state.isValidABI
                 }
                 onClick={setupSmartContract}
               >
@@ -259,12 +271,39 @@ export default function Home() {
             <br />
             <br />
             <br />
-            {/* {!state.isValidABI && <p style={{ color: "red" }}>INVALID ABI</p>} */}
           </Col>
-          <Col span={24}>
-            <Tabs items={items} />
-          </Col>
-          <Col></Col>
+          {state.smartContract && (
+            <>
+              <Col span={12} title="Decode data">
+                <Input.TextArea
+                  onChange={inputDataEncoded}
+                  placeholder="Input here"
+                />
+
+                <Button onClick={handleDecodeData} type="ghost">
+                  Decode
+                </Button>
+              </Col>
+              <Col span={12}>
+                <Descriptions title="Decoded Data" bordered>
+                  <Descriptions.Item label="Function name" span={3}>
+                    {state.decodedData?.functionName}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Arguments" span={3}>
+                    {state.decodedData?.args?.map((item, index) => (
+                      <div>
+                        <span>{index + 1}. </span>
+                        <span>{JSON.stringify(item)} </span>
+                      </div>
+                    ))}
+                  </Descriptions.Item>
+                </Descriptions>
+              </Col>
+              <Col span={24}>
+                <Tabs items={items} />
+              </Col>
+            </>
+          )}
         </Row>
       </HomeWrapper>
     </HomeContext.Provider>

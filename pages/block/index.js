@@ -28,7 +28,7 @@ function BlockPage() {
       Number(blockNumber) - 1
     );
 
-    if (!isEmpty(blockInfo)) {
+    if (!isEmpty(blockInfo) || !isEmpty(prevBlock)) {
       blockInfo.totalTransaction = blockInfo.transactions.length;
       blockInfo.blockTimeDiff = blockInfo.timestamp - prevBlock.timestamp;
       setBlockInfo(blockInfo);

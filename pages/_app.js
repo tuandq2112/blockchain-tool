@@ -47,7 +47,7 @@ function App({ Component, pageProps }) {
       src="https://challenges.cloudflare.com/turnstile/v0/api.js"
       onLoad={() => {
         window.turnstile?.render('#turnstile-widget', {
-          sitekey: "0x4AAAAAAAzbUXu9tBbouE2A",
+          sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
           callback: handleVerify,
         });
       }}

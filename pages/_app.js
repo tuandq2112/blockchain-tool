@@ -33,14 +33,9 @@ function App({ Component, pageProps }) {
   const [isVerify, setVerify] = useState(false);
 
   const handleVerify = async (token) => {
-    try {
-      const response = await axios.post('/api/verify-turnstile', { token });
-      if (response.data.success) {
-        setVerify(true);
-      } else {
-        setVerify(false);
-      }
-    } catch (error) {
+    if (token) {
+      setVerify(true);
+    } else {
       setVerify(false);
     }
   };

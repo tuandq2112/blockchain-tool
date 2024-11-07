@@ -59,8 +59,8 @@ function App({ Component, pageProps }) {
     />
       <div id="turnstile-widget"></div>
     </>}
-
-    {(isProduction && isVerify) || !isProduction && <ConfigProvider>
+    {isVerify?"True":"false"}
+    {((isProduction && isVerify) || !isProduction) && <ConfigProvider>
       <Provider store={store}>
         <GlobalStyled />
         <WagmiConfig config={wagmiConfig}>

@@ -52,9 +52,8 @@ function App({ Component, pageProps }) {
         });
       }}
     />
-      <div id="turnstile-widget"></div>
+    {!isVerify && <Turnstile />}
     </>}
-    {isVerify?"True":"false"}
     {((isProduction && isVerify) || !isProduction) && <ConfigProvider>
       <Provider store={store}>
         <GlobalStyled />

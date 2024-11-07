@@ -13,7 +13,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import store from "shared";
-import { GlobalStyled } from "styles/styled";
+import { CenterDiv, GlobalStyled } from "styles/styled";
 import { WagmiConfig } from "wagmi";
 import { Turnstile } from 'react-turnstile';
 import axios from "axios";
@@ -52,7 +52,7 @@ function App({ Component, pageProps }) {
         });
       }}
     />
-    {!isVerify && <Turnstile />}
+      {!isVerify && <CenterDiv> <div id="turnstile-widget"></div></CenterDiv>}
     </>}
     {((isProduction && isVerify) || !isProduction) && <ConfigProvider>
       <Provider store={store}>

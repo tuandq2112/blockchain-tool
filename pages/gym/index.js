@@ -24,7 +24,7 @@ function Gym() {
     return (
         <div>
             <Select options={[{ label: "Full body 1", value: 1 }]} onChange={handleChange} value={selectedExercise}>Choose exercise</Select>
-
+            <hr />
             <Row gutter={[16, 16]}>
                 {exercises[selectedExercise]?.map((exercise, index) => (
                     <Col key={index} xs={24} sm={12} md={8} lg={6} xl={4}>

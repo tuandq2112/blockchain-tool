@@ -17,13 +17,17 @@ function Gym() {
         // Add more exercises here
     };
 
+    const options = [
+        { label: "Full body 1", value: 1 },
+        { label: "Full body 2", value: 2 },
+    ];
     const handleChange = (value) => {
         setSelectedExercise(value);
     };
 
     return (
         <div>
-            <Select options={[{ label: "Full body 1", value: 1 }]} onChange={handleChange} value={selectedExercise}>Choose exercise</Select>
+            <Select options={options} onChange={handleChange} value={selectedExercise}>Choose exercise</Select>
             <hr />
             <Row gutter={[16, 16]}>
                 {exercises[selectedExercise]?.map((exercise, index) => (

@@ -60,6 +60,14 @@ const MenuConfig = [
       },
     ],
   },
+  {
+    label: <Link href="/wait-tet">Tet</Link>,
+    key: "tet",
+  },
+  {
+    label: <Link href="/gym">Gym</Link>,
+    key: "gym",
+  },
 ];
 
 const AvatarDropdownConfig = [
